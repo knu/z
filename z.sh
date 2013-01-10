@@ -68,27 +68,27 @@ _z() {
 
  # tab completion
  elif [ "$1" = "--complete" ]; then
-  while read line; do
-   [ -d "${line%%\|*}" ] && echo "$line"
-  done < "$datafile" | awk -v q="$2" -F"|" '
+  _z -lr | awk -v q="$2" -F"|" '
    BEGIN {
     if( q == tolower(q) ) nocase = 1
     split(substr(q,3),fnd," ")
    }
    {
+    sub(/^[^\/]+/, "", $0)
+    x = $0
     if( nocase ) {
-     for( i in fnd ) tolower($1) !~ tolower(fnd[i]) && $1 = ""
+     for( i in fnd ) tolower(x) !~ tolower(fnd[i]) && x = ""
     } else {
-     for( i in fnd ) $1 !~ fnd[i] && $1 = ""
+     for( i in fnd ) x !~ fnd[i] && x = ""
     }
-    if( $1 ) print $1
+    if( x ) print
    }
   ' 2>/dev/null
 
  else
   # list/go
   local opt OPTIND=1
-  local list rev typ fnd cd
+  local list rev typ fnd cd limit
   while getopts hlrt opt; do case "$opt" in
    l) list=1;;
    r) typ="rank";;
@@ -112,9 +112,12 @@ _z() {
   # no file yet
   [ -f "$datafile" ] || return
 
+  # show only top 10 if stdout is a terminal
+  [ -t 1 ] && limit=10
+
   cd="$(while read line; do
    [ -d "${line%%\|*}" ] && echo "$line"
-  done < "$datafile" | awk -v t="$(date +%s)" -v list="$list" -v typ="$typ" -v q="$fnd" -F"|" '
+  done < "$datafile" | awk -v t="$(date +%s)" -v list="$list" -v typ="$typ" -v q="$fnd" -v limit="$limit" -F"|" '
    function frecent(rank, time) {
     dx = t-time
     if( dx < 3600 ) return rank*4
@@ -124,9 +127,17 @@ _z() {
    }
    function output(files, toopen, override) {
     if( list ) {
-     cmd = "sort -n"
-     for( i in files ) if( files[i] ) printf "%-10s %s\n", files[i], i | cmd
-     if( override ) printf "%-10s %s\n", "common:", override
+     if( override ) {
+      printf "%-10s %s\n", max, override
+      if( limit ) limit--
+     }
+     cmd = "sort -nr"
+     if( limit ) cmd = cmd " | head -n" limit
+     for( i in files ) {
+      file = files[i]
+      if( file > max ) file = max
+      if( file && i != override ) printf "%-10s %s\n", file, i | cmd
+     }
     } else {
      if( override ) toopen = override
      print toopen
@@ -145,7 +156,7 @@ _z() {
     for( i in matches ) if( matches[i] && i !~ clean_short ) return
     return short
    }
-   BEGIN { split(q, a, " "); oldf = noldf = -9999999999 }
+   BEGIN { split(q, a, " "); max = 9999999999; oldf = noldf = -max }
    {
     if( typ == "rank" ) {
      f = $2
