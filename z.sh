@@ -226,7 +226,7 @@ if compctl &> /dev/null; then
    word=${~qword}
    list=(${(f)"$(_z --complete "$word")"})
    for x in $list; do
-    hash -d x=
+    hash -d x= qword= word=
     qlist+=(${(D)x})
    done
    _describe -t z "z stack" qlist -Q -U -l -V qlist
