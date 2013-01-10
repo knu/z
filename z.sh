@@ -124,9 +124,9 @@ _z() {
    }
    function output(files, toopen, override) {
     if( list ) {
-     cmd = "sort -n >&2"
+     cmd = "sort -n"
      for( i in files ) if( files[i] ) printf "%-10s %s\n", files[i], i | cmd
-     if( override ) printf "%-10s %s\n", "common:", override > "/dev/stderr"
+     if( override ) printf "%-10s %s\n", "common:", override
     } else {
      if( override ) toopen = override
      print toopen
@@ -172,7 +172,13 @@ _z() {
    }
   ')"
   [ $? -gt 0 ] && return
-  [ "$cd" ] && cd "$cd"
+  if [ -n "$list" ]; then
+   cat <<EOF
+$cd
+EOF
+  else
+   [ -d "$cd" ] && cd "$cd"
+  fi
  fi
 }
 
