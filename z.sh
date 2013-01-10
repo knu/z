@@ -87,22 +87,27 @@ _z() {
 
  else
   # list/go
-  local list rev typ fnd last cd
-  while [ "$1" ]; do case "$1" in
-   -h) echo "z [-h][-l][-r][-t] args" >&2; return;;
-   -l) list=1;;
-   -r) typ="rank";;
-   -t) typ="recent";;
-   --) while [ "$1" ]; do shift; fnd="$fnd $1";done;;
-    *) fnd="$fnd $1";;
-  esac; last=$1; shift; done
-  [ "$fnd" ] || list=1
+  local opt OPTIND=1
+  local list rev typ fnd cd
+  while getopts hlrt opt; do case "$opt" in
+   l) list=1;;
+   r) typ="rank";;
+   t) typ="recent";;
+   *) echo "z [-hlrt] args..." >&2; [ $opt = h ]; return;;
+  esac; done
+  shift $((OPTIND-1))
+
+  [ $# -eq 0 ] && list=1
 
   # if we hit enter on a completion just go there
-  case "$last" in
-   # completions will always start with /
-   /*) [ -z "$list" -a -d "$last" ] && cd "$last" && return;;
-  esac
+  if [ -z "$list" -a $# -eq 1 ]; then
+   case "$1" in
+    # completions will always start with /
+    /*) [ -d "$1" ] && cd "$1" && return;;
+   esac
+  fi
+
+  fnd="$*"
 
   # no file yet
   [ -f "$datafile" ] || return
