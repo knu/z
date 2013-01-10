@@ -71,7 +71,7 @@ _z() {
   _z -lr | awk -v q="$2" -F"|" '
    BEGIN {
     if( q == tolower(q) ) nocase = 1
-    split(substr(q,3),fnd," ")
+    split(q,fnd," ")
    }
    {
     sub(/^[^\/]+/, "", $0)
