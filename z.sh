@@ -217,11 +217,23 @@ if compctl &> /dev/null; then
  }
  # zsh tab completion
  _z_zsh_tab_completion() {
-  local compl
-  read -l compl
-  reply=(${(f)"$(_z --complete "$compl")"})
+  emulate -L zsh
+  setopt extended_glob
+  local qword word x
+  local -a list qlist
+  if (( CURRENT == 2 )); then
+   qword=${words[$CURRENT]}
+   word=${~qword}
+   list=(${(f)"$(_z --complete "$word")"})
+   for x in $list; do
+    hash -d x=
+    qlist+=(${(D)x})
+   done
+   _describe -t z "z stack" qlist -Q -U -l -V qlist
+   compstate[insert]=menu
+  fi
  }
- compctl -U -K _z_zsh_tab_completion _z
+ compdef _z_zsh_tab_completion _z
 elif complete &> /dev/null; then
  # bash tab completion
  complete -o filenames -C '_z --complete "$COMP_LINE"' ${_Z_CMD:-z}
