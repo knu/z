@@ -81,9 +81,9 @@ _z() {
      x = substr(x,length(home)+1)
     }
     if( nocase ) {
-     for( i in fnd ) tolower(x) !~ tolower(fnd[i]) && x = ""
+     for( i in fnd ) index(tolower(x), tolower(fnd[i])) || x = ""
     } else {
-     for( i in fnd ) x !~ fnd[i] && x = ""
+     for( i in fnd ) index(x, fnd[i]) || x = ""
     }
     if( x ) print
    }
