@@ -87,15 +87,16 @@ _z() {
 
  else
   # list/go
+  local list rev typ fnd last cd
   while [ "$1" ]; do case "$1" in
    -h) echo "z [-h][-l][-r][-t] args" >&2; return;;
-   -l) local list=1;;
-   -r) local typ="rank";;
-   -t) local typ="recent";;
-   --) while [ "$1" ]; do shift; local fnd="$fnd $1";done;;
-    *) local fnd="$fnd $1";;
-  esac; local last=$1; shift; done
-  [ "$fnd" ] || local list=1
+   -l) list=1;;
+   -r) typ="rank";;
+   -t) typ="recent";;
+   --) while [ "$1" ]; do shift; fnd="$fnd $1";done;;
+    *) fnd="$fnd $1";;
+  esac; last=$1; shift; done
+  [ "$fnd" ] || list=1
 
   # if we hit enter on a completion just go there
   case "$last" in
@@ -106,7 +107,6 @@ _z() {
   # no file yet
   [ -f "$datafile" ] || return
 
-  local cd
   cd="$(while read line; do
    [ -d "${line%%\|*}" ] && echo $line
   done < "$datafile" | awk -v t="$(date +%s)" -v list="$list" -v typ="$typ" -v q="$fnd" -F"|" '
