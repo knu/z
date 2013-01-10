@@ -72,11 +72,11 @@ _z() {
    BEGIN {
     if( q == tolower(q) ) nocase = 1
     split(q,fnd," ")
+    home = ENVIRON["HOME"]
    }
    {
     sub(/^[^\/]+/, "", $0)
     x = $0
-    home = ENVIRON["HOME"]
     if( q !~ /^\// && substr(x,0,length(home)+1) == home "/" ) {
      x = substr(x,length(home)+1)
     }
@@ -160,7 +160,12 @@ _z() {
     for( i in matches ) if( matches[i] && i !~ clean_short ) return
     return short
    }
-   BEGIN { split(q, a, " "); max = 9999999999; oldf = noldf = -max }
+   BEGIN {
+    max = 9999999999
+    oldf = noldf = -max
+    split(q, a, " ")
+    home = ENVIRON["HOME"]
+   }
    {
     if( typ == "rank" ) {
      f = $2
@@ -168,9 +173,13 @@ _z() {
      f = $3-t
     } else f = frecent($2, $3)
     wcase[$1] = nocase[$1] = f
+    x = $1
+    if( q !~ /^\// && substr(x,0,length(home)+1) == home "/" ) {
+     x = substr(x,length(home)+1)
+    }
     for( i in a ) {
-     if( $1 !~ a[i] ) delete wcase[$1]
-     if( tolower($1) !~ tolower(a[i]) ) delete nocase[$1]
+     if( !index(x, a[i]) ) delete wcase[$1]
+     if( !index(tolower(x), tolower(a[i])) ) delete nocase[$1]
     }
     if( wcase[$1] && wcase[$1] > oldf ) {
      cx = $1
