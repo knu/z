@@ -76,6 +76,10 @@ _z() {
    {
     sub(/^[^\/]+/, "", $0)
     x = $0
+    home = ENVIRON["HOME"]
+    if( q !~ /^\// && substr(x,0,length(home)+1) == home "/" ) {
+     x = substr(x,length(home)+1)
+    }
     if( nocase ) {
      for( i in fnd ) tolower(x) !~ tolower(fnd[i]) && x = ""
     } else {
