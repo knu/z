@@ -27,7 +27,7 @@ NAME
 
 
 SYNOPSIS
-       z [−h] [−l] [−r] [−t] [regex1 regex2 ... regexn]
+       z [−h] [−l] [−r] [−t] [substring...]
 
 
 AVAILABILITY
@@ -38,7 +38,7 @@ DESCRIPTION
        Tracks your most used directories, based on ’frecency’.
 
        After  a  short	learning  phase, z will take you to the most ’frecent’
-       directory that matches ALL of the regexes given on the command line.
+       directory that matches ALL of the substrings given on the command line.
 
 
 OPTIONS
@@ -143,7 +143,7 @@ FILES
 
 
 SEE ALSO
-       regex(7), pushd, popd, autojump, cdargs
+       pushd, popd, autojump, cdargs
 
        Please file bugs at https://github.com/rupa/z/
 
