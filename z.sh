@@ -39,9 +39,7 @@ _z() {
   # maintain the file
   local tempfile
   tempfile="$(mktemp $datafile.XXXXXX)" || return
-  while read line; do
-   [ -d "${line%%\|*}" ] && echo "$line"
-  done < "$datafile" | awk -v path="$*" -v now="$(date +%s)" -F"|" '
+  < "$datafile" awk -v path="$*" -v now="$(date +%s)" -F"|" '
    BEGIN {
     rank[path] = 1
     time[path] = now
