@@ -13,7 +13,7 @@ bash, zsh
 Tracks your most used directories, based on 'frecency'.
 .P
 After a short learning phase, \fBz\fR will take you to the most 'frecent'
-directory that matches ALL of the regexes given on the command line.
+directory that matches ALL of the substrings given on the command line.
 
 .SH OPTIONS
 \fB\-h\fR show a brief help message
@@ -23,6 +23,12 @@ directory that matches ALL of the regexes given on the command line.
 \fB\-r\fR match by rank only
 .br
 \fB\-t\fR match by recent access only
+.P
+Nonexistent directories are omitted from output and ignored in moving
+and completion but kept in database for future use.
+.P
+In listing, only top 10 directories are shown if stdout is a terminal.
+To show all, run \fBz\fR with a pipe, like 'z | cat' or 'z | less'.
 
 .SH EXAMPLES
 \fBz foo\fR     cd to most frecent dir matching foo
