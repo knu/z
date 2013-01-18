@@ -18,7 +18,8 @@
 #   * z foo bar # cd to most frecent dir matching foo and bar
 #   * z -r foo  # cd to highest ranked dir matching foo
 #   * z -t foo  # cd to most recently accessed dir matching foo
-#   * z -l foo  # list all dirs matching foo (by frecency)
+#   * z -l foo  # list top 10 dirs matching foo (sorted by frecency)
+#   * z -l | less # list all dirs (sorted by frecency)
 
 _z() {
 
@@ -97,7 +98,17 @@ _z() {
    l) list=1;;
    r) typ="rank";;
    t) typ="recent";;
-   *) echo "z [-hlrt] args..." >&2; [ $opt = h ]; return;;
+   *) cat <<EOF >&2
+z [-lrt] [args...]
+
+    -h          show this help
+    -l          list dirs (matching args if given)
+    -r          sort dirs by rank
+    -t          sort dirs by recency
+
+    Omitting args implies -l.
+EOF
+      [ $opt = h ]; return;;
   esac; done
   shift $((OPTIND-1))
 
