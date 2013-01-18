@@ -34,6 +34,8 @@ _z() {
   # $HOME isn't worth matching
   [ "$*" = "$HOME" ] && return
 
+  [ -f "$datafile" ] || touch "$datafile"
+
   # maintain the file
   local tempfile
   tempfile="$(mktemp $datafile.XXXXXX)" || return
