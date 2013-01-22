@@ -1,3 +1,4 @@
+# -*- mode: sh; sh-basic-offset: 1 -*-
 # Copyright (c) 2009 rupa deadwyler under the WTFPL license
 
 # maintains a jump-list of the directories you actually use
