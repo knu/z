@@ -12,6 +12,7 @@
 #     set $_Z_DATA in .bashrc/.zshrc to change the datafile (default ~/.z).
 #     set $_Z_NO_RESOLVE_SYMLINKS to prevent symlink resolution.
 #     set $_Z_NO_PROMPT_COMMAND if you're handling PROMPT_COMMAND yourself.
+#     set $_Z_EXCLUDE_DIRS to an array of directories to exclude.
 #
 # USE:
 #   * z foo     # cd to most frecent dir matching foo
@@ -35,6 +36,12 @@ _z() {
   # $HOME isn't worth matching
   [ "$*" = "$HOME" ] && return
 
+  # don't track excluded dirs
+  local exclude
+  for exclude in "${_Z_EXCLUDE_DIRS[@]}"; do
+   [ "$*" = "$exclude" ] && return
+  done
+
   [ -f "$datafile" ] || touch "$datafile"
 
   # maintain the file
@@ -56,8 +63,8 @@ _z() {
     count += $2
    }
    END {
-    if( count > 1000 ) {
-     for( i in rank ) print i "|" 0.9*rank[i] "|" time[i] # aging
+    if( count > 6000 ) {
+     for( i in rank ) print i "|" 0.99*rank[i] "|" time[i] # aging
     } else for( i in rank ) print i "|" rank[i] "|" time[i]
    }
   ' 2>/dev/null >| "$tempfile"
