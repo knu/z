@@ -30,7 +30,8 @@ _z() {
  [ -f "$datafile" -a ! -O "$datafile" ] && return
 
  # add entries
- if [ "$1" = "--add" ]; then
+ case "$1" in
+ --add)
   shift
 
   # $HOME isn't worth matching
@@ -73,9 +74,25 @@ _z() {
   else
    env mv -f "$tempfile" "$datafile"
   fi
+  ;;
+ --del|--delete)
+  shift
 
+  if [ -f "$datafile" ]; then
+   local tempfile
+   tempfile="$(mktemp $datafile.XXXXXX)" || return
+   < "$datafile" awk -v dir="$1" -F"|" '$1 != dir' 2>/dev/null >| "$tempfile"
+   if [ $? -ne 0 -a -f "$datafile" ]; then
+    env rm -f "$tempfile"
+   else
+    env mv -f "$tempfile" "$datafile"
+   fi
+  else
+   touch "$datafile"
+  fi
+  ;;
  # tab completion
- elif [ "$1" = "--complete" ]; then
+ --complete)
   _z -lr | awk -v q="$2" -F"|" '
    BEGIN {
     if( q == tolower(q) ) nocase = 1
@@ -96,8 +113,8 @@ _z() {
     if( x ) print
    }
   ' 2>/dev/null
-
- else
+  ;;
+ *)
   # list/go
   local opt OPTIND=1
   local list rev typ fnd cd limit
@@ -221,7 +238,8 @@ EOF
   else
    [ -d "$cd" ] && cd "$cd"
   fi
- fi
+  ;;
+ esac
 }
 
 alias ${_Z_CMD:-z}='_z 2>&1'
