@@ -258,7 +258,7 @@ if [ -n "$BASH_VERSION" ]; then
  return
 fi
 
-if compctl &> /dev/null; then
+if [[ "${ZSH_VERSION-0.0}" != [0-3].* ]]; then
  [ "$_Z_NO_PROMPT_COMMAND" ] || {
   # zsh populate directory list, avoid clobbering any other precmds
   if [ "$_Z_NO_RESOLVE_SYMLINKS" ]; then
