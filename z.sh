@@ -106,12 +106,9 @@ _z() {
     if( q !~ /^\// && substr(x,0,length(home)+1) == home "/" ) {
      x = substr(x,length(home)+1)
     }
-    if( nocase ) {
-     for( i in fnd ) index(tolower(x), tolower(fnd[i])) || x = ""
-    } else {
-     for( i in fnd ) index(x, fnd[i]) || x = ""
-    }
-    if( x ) print
+    if( nocase ) x = tolower(x)
+    for( i in fnd ) if (!index(x, fnd[i])) next
+    print
    }
   ' 2>/dev/null
   ;;
