@@ -4,7 +4,7 @@ NAME
 z \- jump around
 .SH
 SYNOPSIS
-z [\-h] [\-l] [\-r] [\-t] [substring...]
+z [\-h] [\-l] [\-r] [\-t] [string...]
 .SH
 AVAILABILITY
 bash, zsh
@@ -13,7 +13,7 @@ DESCRIPTION
 Tracks your most used directories, based on 'frecency'.
 .P
 After a short learning phase, \fBz\fR will take you to the most 'frecent'
-directory that matches ALL of the substrings given on the command line.
+directory that matches ALL of the strings given on the command line.
 .SH
 OPTIONS
 .TP
@@ -24,10 +24,10 @@ show a brief help message
 list only
 .TP
 \fB\-r\fR
-match by rank only
+sort by rank instead of frecency
 .TP
 \fB\-t\fR
-match by recent access only
+sort by recency instead of frecency
 .P
 Nonexistent directories are omitted from output and ignored in moving
 and completion but kept in database for future use.
@@ -37,19 +37,19 @@ To show all, run \fBz\fR with a pipe, like 'z | cat' or 'z | less'.
 .SH EXAMPLES
 .TP 14
 \fBz foo\fR
-cd to most frecent dir matching foo
+cd to most frecent directory matching foo
 .TP 14
 \fBz foo bar\fR
-cd to most frecent dir matching foo and bar
+cd to most frecent directory matching foo and bar
 .TP 14
 \fBz -r foo\fR
-cd to highest ranked dir matching foo
+cd to highest ranked directory matching foo
 .TP 14
 \fBz -t foo\fR
-cd to most recently accessed dir matching foo
+cd to most recently accessed directory matching foo
 .TP 14
 \fBz -l foo\fR
-list all dirs matching foo (by frecency)
+list all directories matching foo (by frecency)
 .SH
 NOTES
 .SS
@@ -70,22 +70,24 @@ Optionally:
 Set \fB$_Z_CMD\fR to change the command name (default \fBz\fR).
 .RE
 .RS
-Set \fB$_Z_DATA\fR to change the datafile (default \fB$HOME/.z\fR).
+Set \fB$_Z_DATA\fR to change the data file name (default \fB$HOME/.z\fR).
 .RE
 .RS
 Set \fB$_Z_NO_RESOLVE_SYMLINKS\fR to prevent symlink resolution.
 .RE
 .RS
-Set \fB$_Z_NO_PROMPT_COMMAND\fR to handle \fBPROMPT_COMMAND/precmd\fR yourself.
+Set \fB$_Z_NO_PROMPT_COMMAND\fR to handle \fBPROMPT_COMMAND (bash) /
+precmd (zsh) \fR yourself.
 .RE
 .RS
 Set \fB$_Z_EXCLUDE_DIRS\fR to an array of directories to exclude.
 .RE
 .RS
-(These settings should go in .bashrc/.zshrc before the lines added above.)
+These settings should go in .bashrc/.zshrc before the line added above.
 .RE
 .RS
-Install the provided man page \fBz.1\fR somewhere like \fB/usr/local/man/man1\fR.
+Install the provided man page \fBz.1\fR to somewhere in the man path
+like \fB/usr/local/man/man1\fR.
 .RE
 .SS
 Aging:
@@ -95,8 +97,8 @@ the sum of ranks is greater than 6000, all ranks are multiplied by 0.99. Entries
 with a rank lower than 1 are forgotten.
 .SS
 Frecency:
-Frecency is a portmantaeu of 'recent' and 'frequency'. It is a weighted rank
-that depends on how often and how recently something occured. As far as I
+Frecency is a portmanteau of 'recent' and 'frequency'. It is a weighted rank
+that depends on how often and how recently something occurred. As far as I
 know, Mozilla came up with the term.
 .P
 To \fBz\fR, a directory that has low ranking but has been accessed recently
@@ -127,12 +129,12 @@ A function \fB_z()\fR is defined.
 The contents of the variable \fB$_Z_CMD\fR is aliased to \fB_z 2>&1\fR. If not
 set, \fB$_Z_CMD\fR defaults to \fBz\fR.
 .P
-The environment variable \fB$_Z_DATA\fR can be used to control the datafile
+The environment variable \fB$_Z_DATA\fR can be used to control the data file
 location. If it is not defined, the location defaults to \fB$HOME/.z\fR.
 .P
 The environment variable \fB$_Z_NO_RESOLVE_SYMLINKS\fR can be set to prevent
 resolving of symlinks. If it is not set, symbolic links will be resolved when
-added to the datafile..
+added to the data file.
 .P
 In bash, \fBz\fR prepends a command to the \fBPROMPT_COMMAND\fR environment
 variable to maintain its database. In zsh, \fBz\fR appends a function
