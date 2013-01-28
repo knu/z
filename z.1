@@ -1,159 +1,227 @@
-.TH "Z" "1" "January 2013" "z" "User Commands"
-.SH
-NAME
-z \- jump around
-.SH
-SYNOPSIS
-z [\-h] [\-l] [\-r] [\-t] [string...]
-.SH
-AVAILABILITY
+.Dd January 29, 2013
+.Dt Z \&1 "User Commands Manual"
+.Os Unix
+.Sh NAME
+.Nm z
+.Nd jump around
+.Sh SYNOPSIS
+.Nm z
+.Op Fl hlrt
+.Op Ar string ...
+.Sh AVAILABILITY
 bash, zsh
-.SH
-DESCRIPTION
-Tracks your most used directories, based on 'frecency'.
+.Sh DESCRIPTION
+Tracks your most used directories, based on
+.Sq frecency .
 .P
-After a short learning phase, \fBz\fR will take you to the most 'frecent'
+After a short learning phase,
+.Nm
+will take you to the most
+.Sq frecent
 directory that matches ALL of the strings given on the command line.
-.SH
-OPTIONS
-.TP
-\fB\-h\fR
-show a brief help message
-.TP
-\fB\-l\fR
-list only
-.TP
-\fB\-r\fR
-sort by rank instead of frecency
-.TP
-\fB\-t\fR
-sort by recency instead of frecency
-.P
+.Sh OPTIONS
+.Bl -tag -compact -width "-l"
+.It Fl h
+Show a brief help message.
+.Pp
+.It Fl l
+List only.
+.Pp
+.It Fl r
+Sort by rank instead of
+.Sq frecency .
+.Pp
+.It Fl t
+Sort by recency instead of
+.Sq frecency .
+.El
+.Pp
 Nonexistent directories are omitted from output and ignored in moving
 and completion but kept in database for future use.
-.P
+.Pp
 In listing, only top 10 directories are shown if stdout is a terminal.
-To show all, run \fBz\fR with a pipe, like 'z | cat' or 'z | less'.
-.SH EXAMPLES
-.TP 14
-\fBz foo\fR
+To show all, run
+.Nm
+with a pipe, like
+.Sq Ic "z | cat"
+or
+.Sq Ic "z | less" .
+.Sh EXAMPLES
+.Bl -tag -compact -width "z foo bar"
+.It Ic "z foo"
 cd to most frecent directory matching foo
-.TP 14
-\fBz foo bar\fR
+.It Ic "z foo bar"
 cd to most frecent directory matching foo and bar
-.TP 14
-\fBz -r foo\fR
+.It Ic "z -r foo"
 cd to highest ranked directory matching foo
-.TP 14
-\fBz -t foo\fR
+.It Ic "z -t foo"
 cd to most recently accessed directory matching foo
-.TP 14
-\fBz -l foo\fR
+.It Ic "z -l foo"
 list all directories matching foo (by frecency)
-.SH
-NOTES
-.SS
-Installation:
-.P
-Put something like this in your \fB$HOME/.bashrc\fR or \fB$HOME/.zshrc\fR:
-.RS
-.P
-\fB. /path/to/z.sh\fR
-.RE
-.P
-\fBcd\fR around for a while to build up the db.
-.P
+.El
+.Sh "NOTES"
+.Ss "Installation:"
+.Bl -enum -offset 3n
+.It
+Put something like this in your
+.Pa $HOME/.bashrc
+or
+.Pa $HOME/.zshrc :
+.Dl . /path/to/z.sh
+.It
+cd around for a while to build up the db.
+.It
 PROFIT!!
-.P
-Optionally:
-.RS
-Set \fB$_Z_CMD\fR to change the command name (default \fBz\fR).
-.RE
-.RS
-Set \fB$_Z_DATA\fR to change the data file name (default \fB$HOME/.z\fR).
-.RE
-.RS
-Set \fB$_Z_NO_RESOLVE_SYMLINKS\fR to prevent symlink resolution.
-.RE
-.RS
-Set \fB$_Z_NO_PROMPT_COMMAND\fR to handle \fBPROMPT_COMMAND (bash) /
-precmd (zsh) \fR yourself.
-.RE
-.RS
-Set \fB$_Z_EXCLUDE_DIRS\fR to an array of directories to exclude.
-.RE
-.RS
-These settings should go in .bashrc/.zshrc before the line added above.
-.RE
-.RS
-Install the provided man page \fBz.1\fR to somewhere in the man path
-like \fB/usr/local/man/man1\fR.
-.RE
-.SS
-Aging:
-The rank of directories maintained by \fBz\fR undergoes aging based on a simple
-formula. The rank of each entry is incremented every time it is accessed. When
-the sum of ranks is greater than 6000, all ranks are multiplied by 0.99. Entries
-with a rank lower than 1 are forgotten.
-.SS
-Frecency:
-Frecency is a portmanteau of 'recent' and 'frequency'. It is a weighted rank
-that depends on how often and how recently something occurred. As far as I
-know, Mozilla came up with the term.
-.P
-To \fBz\fR, a directory that has low ranking but has been accessed recently
-will quickly have higher rank than a directory accessed frequently a long time
-ago.
-.P
+.El
+.Pp
+.Ss "Optionally:"
+.Bl -item -offset 3n
+.It
+Set
+.Ev _Z_CMD
+to change the command name (default
+.Sq Ic z ) .
+.It
+Set
+.Ev _Z_DATA
+to change the data file name (default
+.Sq Pa $HOME/.z ) .
+.It
+Set
+.Ev _Z_NO_RESOLVE_SYMLINKS
+to prevent symlink resolution.
+.It
+Set
+.Ev _Z_NO_PROMPT_COMMAND
+to handle
+.Ev PROMPT_COMMAND
+(bash) /
+.Ic precmd
+(zsh) yourself.
+.It
+Set
+.Ev _Z_EXCLUDE_DIRS
+to an array of directories to exclude.
+.El
+.Pp
+These settings should go in
+.Pa .bashrc /
+.Pa .zshrc
+before the line added above.
+.Pp
+Install the provided man page
+.Pa z.1
+to somewhere in the man path like
+.Pa /usr/local/man/man1 .
+.Ss "Aging:"
+The rank of directories maintained by
+.Nm
+undergoes aging based on a simple formula.  The rank of each entry is
+incremented every time it is accessed.  When the sum of ranks is
+greater than 6000, all ranks are multiplied by 0.99.  Entries with a
+rank lower than 1 are forgotten.
+.Ss "Frecency:"
+Frecency is a portmanteau of
+.Sq recent
+and
+.Sq frequency .
+It is a weighted rank that depends on how often and how recently
+something occurred.  As far as I know, Mozilla came up with the term.
+.Pp
+To
+.Nm ,
+a directory that has low ranking but has been accessed recently will
+quickly have higher rank than a directory accessed frequently a long
+time ago.
+.Pp
 Frecency is determined at runtime.
-.SS
-Common:
+.Ss "Common:"
 When multiple directories match all queries, and they all have a common prefix,
-\fBz\fR will cd to the shortest matching directory, without regard to priority.
-This has been in effect, if undocumented, for quite some time, but should
-probably be configurable or reconsidered.
-.SS
-Tab Completion:
-\fBz\fR supports tab completion. After any number of arguments, press TAB to
-complete on directories that match each argument. Due to limitations of the
-completion implementations, only the last argument will be completed in the
-shell.
+.Nm
+will cd to the shortest matching directory, without regard to
+priority.  This has been in effect, if undocumented, for quite some
+time, but should probably be configurable or reconsidered.
+.Ss "Tab Completion:"
+.Nm
+supports tab completion.  After any number of arguments, press
+.Ic TAB
+to complete on directories that match each argument.  Due to
+limitations of the completion implementations, only the last argument
+will be completed in the shell.
+.Pp
+Internally,
+.Nm
+decides you've requested a completion if the last argument passed is
+an absolute path to an existing directory.  This may cause unexpected
+behavior if the last argument to
+.Nm
+begins with
+.Ic / .
+.Sh ENVIRONMENT
+A function
+.Fn _z
+is defined.
+.Pp
+The contents of the variable
+.Ev _Z_CMD
+is aliased to
+.Sq Ic _z 2>&1 .
+If not set,
+.Ev _Z_CMD
+defaults to
+.Ic z .
 .P
-Internally, \fBz\fR decides you've requested a completion if the last argument
-passed is an absolute path to an existing directory. This may cause unexpected
-behavior if the last argument to \fBz\fR begins with \fB/\fR.
-.SH
-ENVIRONMENT
-A function \fB_z()\fR is defined.
-.P
-The contents of the variable \fB$_Z_CMD\fR is aliased to \fB_z 2>&1\fR. If not
-set, \fB$_Z_CMD\fR defaults to \fBz\fR.
-.P
-The environment variable \fB$_Z_DATA\fR can be used to control the data file
-location. If it is not defined, the location defaults to \fB$HOME/.z\fR.
-.P
-The environment variable \fB$_Z_NO_RESOLVE_SYMLINKS\fR can be set to prevent
-resolving of symlinks. If it is not set, symbolic links will be resolved when
-added to the data file.
-.P
-In bash, \fBz\fR prepends a command to the \fBPROMPT_COMMAND\fR environment
-variable to maintain its database. In zsh, \fBz\fR appends a function
-\fB_z_precmd\fR to the \fBprecmd_functions\fR array.
-.P
-The environment variable \fB$_Z_NO_PROMPT_COMMAND\fR can be set if you want to
-handle \fBPROMPT_COMMAND\fR or \fBprecmd\fR yourself.
-.P
-The environment variable \fB$_Z_EXCLUDE_DIRS\fR can be set to an array of
-directories to exclude from tracking. \fB$HOME\fR is always excluded.
-Directories must be full paths without trailing slashes.
-.SH
-FILES
-Data is stored in \fB$HOME/.z\fR. This can be overridden by setting the
-\fB$_Z_DATA\fR environment variable.
-.P
-A man page (\fBz.1\fR) is provided.
-.SH
-SEE ALSO
-autojump(1), bash(1), cdargs(1), zshall(1)
-.P
-Please file bugs at https://github.com/rupa/z/
+The environment variable
+.Ev _Z_DATA
+can be used to control the data file location.  If it is not defined,
+the location defaults to
+.Sq Pa $HOME/.z .
+.Pp
+The environment variable
+.Ev _Z_NO_RESOLVE_SYMLINKS
+can be set to prevent resolving of symlinks.  If it is not set,
+symbolic links will be resolved when added to the data file.
+.Pp
+In bash,
+.Nm
+prepends a command to the
+.Ev PROMPT_COMMAND
+environment variable to maintain its database.  In zsh,
+.Nm
+appends a function
+.Ic _z_precmd
+to the
+.Ic precmd_functions
+array.
+.Pp
+The environment variable
+.Ev _Z_NO_PROMPT_COMMAND
+can be set if you want to handle
+.Ev PROMPT_COMMAND
+or
+.Ic precmd
+yourself.
+.Pp
+The environment variable
+.Ev _Z_EXCLUDE_DIRS
+can be set to an array of directories to exclude from tracking.
+.Ev HOME
+is always excluded.  Directories must be full paths without trailing
+slashes.
+.Sh FILES
+Data is stored in
+.Pa $HOME/.z .  This can be overridden by setting the
+.Ev _Z_DATA
+environment variable.
+.Pp
+A man page
+.Pq Pa z.1
+is provided.
+.Sh SEE ALSO
+.Xr autojump 1 ,
+.Xr bash 1 ,
+.Xr cdargs 1 ,
+.Xr zshall 1
+.Sh BUGS
+Please file bugs at
+.Aq Pa https://github.com/rupa/z/ .
