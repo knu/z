@@ -1,132 +1,134 @@
-Z(1)                             User Commands                            Z(1)
 
-
+Z(1)                         User Commands Manual                         Z(1)
 
 NAME
-       z - jump around
+     z -- jump around
 
 SYNOPSIS
-       z [-h] [-l] [-r] [-t] [substring...]
+     z [-hlrt] [string ...]
 
 AVAILABILITY
-       bash, zsh
+     bash, zsh
 
 DESCRIPTION
-       Tracks your most used directories, based on 'frecency'.
-
-       After  a  short  learning  phase, z will take you to the most 'frecent'
-       directory that matches ALL of the substrings given on the command line.
+     Tracks your most used directories, based on `frecency'.  After a short
+     learning phase, z will take you to the most `frecent' directory that
+     matches ALL of the strings given on the command line.
 
 OPTIONS
-       -h     show a brief help message
+     -h  Show a brief help message.
 
-       -l     list only
+     -l  List only.
 
-       -r     match by rank only
+     -r  Sort by rank instead of `frecency'.
 
-       -t     match by recent access only
+     -t  Sort by recency instead of `frecency'.
+
+     Nonexistent directories are omitted from output and ignored in moving and
+     completion but kept in database for future use.
+
+     In listing, only top 10 directories are shown if stdout is a terminal.
+     To show all, run z with a pipe, like `z | cat' or `z | less'.
 
 EXAMPLES
-       z foo         cd to most frecent dir matching foo
-
-       z foo bar     cd to most frecent dir matching foo and bar
-
-       z -r foo      cd to highest ranked dir matching foo
-
-       z -t foo      cd to most recently accessed dir matching foo
-
-       z -l foo      list all dirs matching foo (by frecency)
+     z foo      cd to most frecent directory matching foo
+     z foo bar  cd to most frecent directory matching foo and bar
+     z -r foo   cd to highest ranked directory matching foo
+     z -t foo   cd to most recently accessed directory matching foo
+     z -l foo   list all directories matching foo (by frecency)
 
 NOTES
    Installation:
-       Put something like this in your $HOME/.bashrc or $HOME/.zshrc:
+        1.   Put something like this in your $HOME/.bashrc or $HOME/.zshrc:
+                   . /path/to/z.sh
 
-              . /path/to/z.sh
+        2.   cd around for a while to build up the db.
 
-       cd around for a while to build up the db.
+        3.   PROFIT!!
 
-       PROFIT!!
+   Optionally:
+        Set _Z_CMD to change the command name (default `z').
 
-       Optionally:
-              Set $_Z_CMD to change the command name (default z).
-              Set $_Z_DATA to change the datafile (default $HOME/.z).
-              Set $_Z_NO_RESOLVE_SYMLINKS to prevent symlink resolution.
-              Set $_Z_NO_PROMPT_COMMAND to handle PROMPT_COMMAND/precmd  your-
-              self.
-              Set $_Z_EXCLUDE_DIRS to an array of directories to exclude.
-              (These  settings  should  go  in .bashrc/.zshrc before the lines
-              added above.)
-              Install   the   provided   man   page   z.1    somewhere    like
-              /usr/local/man/man1.
+        Set _Z_DATA to change the data file name (default `$HOME/.z').
+
+        Set _Z_NO_RESOLVE_SYMLINKS to prevent symlink resolution.
+
+        Set _Z_NO_PROMPT_COMMAND to handle PROMPT_COMMAND (bash) / precmd
+        (zsh) yourself.
+
+        Set _Z_EXCLUDE_DIRS to an array of directories to exclude.
+
+     These settings should go in .bashrc / .zshrc before the line added above.
+
+     Install the provided man page z.1 to somewhere in the man path like
+     /usr/local/man/man1.
 
    Aging:
-       The rank of directories maintained by z undergoes aging based on a sim-
-       ple formula. The rank of each entry is incremented  every  time  it  is
-       accessed.  When  the  sum  of ranks is greater than 6000, all ranks are
-       multiplied by 0.99. Entries with a rank lower than 1 are forgotten.
+     The rank of directories maintained by z undergoes aging based on a simple
+     formula.  The rank of each entry is incremented every time it is
+     accessed.  When the sum of ranks is greater than 6000, all ranks are mul-
+     tiplied by 0.99.  Entries with a rank lower than 1 are forgotten.
 
    Frecency:
-       Frecency is a portmantaeu of 'recent' and 'frequency'. It is a weighted
-       rank  that  depends on how often and how recently something occured. As
-       far as I know, Mozilla came up with the term.
+     Frecency is a portmanteau of `recent' and `frequency'.  It is a weighted
+     rank that depends on how often and how recently something occurred.  As
+     far as I know, Mozilla came up with the term.
 
-       To z, a directory that has low ranking but has been  accessed  recently
-       will  quickly  have  higher rank than a directory accessed frequently a
-       long time ago.
+     To z, a directory that has low ranking but has been accessed recently
+     will quickly have higher rank than a directory accessed frequently a long
+     time ago.
 
-       Frecency is determined at runtime.
+     Frecency is determined at runtime.
 
    Common:
-       When multiple directories match all queries, and they all have a common
-       prefix, z will cd to the shortest matching directory, without regard to
-       priority.  This has been in effect, if  undocumented,  for  quite  some
-       time, but should probably be configurable or reconsidered.
+     When multiple directories match all queries, and they all have a common
+     prefix, z will cd to the shortest matching directory, without regard to
+     priority.  This has been in effect, if undocumented, for quite some time,
+     but should probably be configurable or reconsidered.
 
    Tab Completion:
-       z  supports tab completion. After any number of arguments, press TAB to
-       complete on directories that match each argument. Due to limitations of
-       the  completion  implementations,  only  the last argument will be com-
-       pleted in the shell.
+     z supports tab completion.  After any number of arguments, press TAB to
+     complete on directories that match each argument.  Due to limitations of
+     the completion implementations, only the last argument will be completed
+     in the shell.
 
-       Internally, z decides you've requested a completion if the  last  argu-
-       ment  passed  is  an  absolute  path to an existing directory. This may
-       cause unexpected behavior if the last argument to z begins with /.
+     Internally, z decides you've requested a completion if the last argument
+     passed is an absolute path to an existing directory.  This may cause
+     unexpected behavior if the last argument to z begins with /.
 
 ENVIRONMENT
-       A function _z() is defined.
+     A function _z() is defined.
 
-       The contents of the variable $_Z_CMD is aliased to _z 2>&1. If not set,
-       $_Z_CMD defaults to z.
+     The contents of the variable _Z_CMD is aliased to `_z 2>&1'.  If not set,
+     _Z_CMD defaults to z.  The environment variable _Z_DATA can be used to
+     control the data file location.  If it is not defined, the location
+     defaults to `$HOME/.z'.
 
-       The  environment  variable $_Z_DATA can be used to control the datafile
-       location. If it is not defined, the location defaults to $HOME/.z.
+     The environment variable _Z_NO_RESOLVE_SYMLINKS can be set to prevent
+     resolving of symlinks.  If it is not set, symbolic links will be resolved
+     when added to the data file.
 
-       The environment variable $_Z_NO_RESOLVE_SYMLINKS can be set to  prevent
-       resolving  of  symlinks.  If  it  is  not  set,  symbolic links will be
-       resolved when added to the datafile..
+     In bash, z prepends a command to the PROMPT_COMMAND environment variable
+     to maintain its database.  In zsh, z appends a function _z_precmd to the
+     precmd_functions array.
 
-       In bash, z prepends a command to the PROMPT_COMMAND  environment  vari-
-       able  to  maintain its database. In zsh, z appends a function _z_precmd
-       to the precmd_functions array.
+     The environment variable _Z_NO_PROMPT_COMMAND can be set if you want to
+     handle PROMPT_COMMAND or precmd yourself.
 
-       The environment variable $_Z_NO_PROMPT_COMMAND can be set if  you  want
-       to handle PROMPT_COMMAND or precmd yourself.
-
-       The  environment  variable  $_Z_EXCLUDE_DIRS  can be set to an array of
-       directories to exclude from tracking. $HOME is always excluded.  Direc-
-       tories must be full paths without trailing slashes.
+     The environment variable _Z_EXCLUDE_DIRS can be set to an array of direc-
+     tories to exclude from tracking.  HOME is always excluded.  Directories
+     must be full paths without trailing slashes.
 
 FILES
-       Data  is  stored  in  $HOME/.z.  This  can be overridden by setting the
-       $_Z_DATA environment variable.
+     Data is stored in $HOME/.z. This can be overridden by setting the _Z_DATA
+     environment variable.
 
-       A man page (z.1) is provided.
+     A man page (z.1) is provided.
 
 SEE ALSO
-       pushd, popd, autojump, cdargs
+     autojump(1), bash(1), cdargs(1), zshall(1)
 
-       Please file bugs at https://github.com/rupa/z/
+BUGS
+     Please file bugs at <https://github.com/rupa/z/>.
 
-
-
-z                                January 2013                             Z(1)
+Unix                           January 29, 2013                           Unix
