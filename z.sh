@@ -246,7 +246,10 @@ alias ${_Z_CMD:-z}='_z 2>&1'
 
 if [ -n "$BASH_VERSION" ]; then
  # bash tab completion
- complete -o filenames -C '_z --complete "$COMP_LINE"' ${_Z_CMD:-z}
+ _z_bash_complete () {
+  COMPREPLY=(`_z --complete "${COMP_WORDS[$COMP_CWORD]}"`)
+ }
+ complete -d -F _z_bash_complete ${_Z_CMD:-z}
  [ "$_Z_NO_PROMPT_COMMAND" ] || {
   # bash populate directory list. avoid clobbering other PROMPT_COMMANDs.
   echo $PROMPT_COMMAND | grep -q "_z --add"
