@@ -286,7 +286,9 @@ if [[ "${ZSH_VERSION-0.0}" != [0-3].* ]]; then
     hash -d x= qword= word=
     qlist+=(${(D)x})
    done
-   _describe -t z "z stack" qlist -Q -U -l -V qlist
+   _alternative \
+    'z:z stack:compadd -d qlist -U -l -Q -- "${qlist[@]}"' \
+    'd:directory:_path_files -/'
    compstate[insert]=menu
   fi
  }
