@@ -35,13 +35,27 @@ _z() {
  --add)
   shift
 
+  local arg
+  if [ $# -gt 1 ]; then
+   for arg; do
+    _z --add "$arg"
+   done
+  fi
+  arg="$1"
+
+  case "$arg" in
+   [^/]*|*//*|*/)
+    arg="$(cd "$arg" 2>/dev/null && pwd $_Z_RESOLVE_SYMLINKS)" || return
+    ;;
+  esac
+
   # $HOME isn't worth matching
-  [ "$*" = "$HOME" ] && return
+  [ "$arg" = "$HOME" ] && return
 
   # don't track excluded dirs
   local exclude
   for exclude in "${_Z_EXCLUDE_DIRS[@]}"; do
-   [ "$*" = "$exclude" ] && return
+   [ "$arg" = "$exclude" ] && return
   done
 
   [ -f "$datafile" ] || touch "$datafile"
@@ -49,7 +63,7 @@ _z() {
   # maintain the file
   local tempfile
   tempfile="$(mktemp $datafile.XXXXXX)" || return
-  < "$datafile" awk -v path="$*" -v now="$(date +%s)" -F"|" '
+  < "$datafile" awk -v path="$arg" -v now="$(date +%s)" -F"|" '
    BEGIN {
     rank[path] = 1
     time[path] = now
@@ -79,10 +93,24 @@ _z() {
  --del|--delete)
   shift
 
+  local arg
+  if [ $# -gt 1 ]; then
+   for arg; do
+    _z --delete "$arg"
+   done
+  fi
+  arg="$1"
+
+  case "$arg" in
+   [^/]*|*//*|*/)
+    arg="$(cd "$arg" 2>/dev/null && pwd $_Z_RESOLVE_SYMLINKS)" || return
+    ;;
+  esac
+
   if [ -f "$datafile" ]; then
    local tempfile
    tempfile="$(mktemp $datafile.XXXXXX)" || return
-   < "$datafile" awk -v dir="$1" -F"|" '$1 != dir' 2>/dev/null >| "$tempfile"
+   < "$datafile" awk -v dir="$arg" -F"|" '$1 != dir' 2>/dev/null >| "$tempfile"
    if [ $? -ne 0 -a -f "$datafile" ]; then
     env rm -f "$tempfile"
    else
@@ -94,7 +122,9 @@ _z() {
   ;;
  # tab completion
  --complete)
-  _z -lr | awk -v q="$2" -F"|" '
+  shift
+
+  _z -lr | awk -v q="$1" -F"|" '
    BEGIN {
     if( q == tolower(q) ) nocase = 1
     split(q,fnd," ")
@@ -253,7 +283,7 @@ if [ -n "$BASH_VERSION" ]; then
  [ "$_Z_NO_PROMPT_COMMAND" ] || {
   # bash populate directory list. avoid clobbering other PROMPT_COMMANDs.
   echo $PROMPT_COMMAND | grep -q "_z --add"
-  [ $? -gt 0 ] && PROMPT_COMMAND='_z --add "$(pwd '$_Z_RESOLVE_SYMLINKS' 2>/dev/null)" 2>/dev/null;'"$PROMPT_COMMAND"
+  [ $? -gt 0 ] && PROMPT_COMMAND='_z --add "$(pwd $_Z_RESOLVE_SYMLINKS 2>/dev/null)" 2>/dev/null;'"$PROMPT_COMMAND"
  }
  return
 fi
