@@ -1,4 +1,3 @@
-
 Z(1)                         User Commands Manual                         Z(1)
 
 NAME
@@ -66,8 +65,8 @@ NOTES
    Aging:
      The rank of directories maintained by z undergoes aging based on a simple
      formula.  The rank of each entry is incremented every time it is
-     accessed.  When the sum of ranks is greater than 6000, all ranks are mul-
-     tiplied by 0.99.  Entries with a rank lower than 1 are forgotten.
+     accessed.  When the sum of ranks is greater than 6000, all ranks are
+     multiplied by 0.99.  Entries with a rank lower than 1 are forgotten.
 
    Frecency:
      Frecency is a portmanteau of `recent' and `frequency'.  It is a weighted
@@ -115,9 +114,10 @@ ENVIRONMENT
      The environment variable _Z_NO_PROMPT_COMMAND can be set if you want to
      handle PROMPT_COMMAND or precmd yourself.
 
-     The environment variable _Z_EXCLUDE_DIRS can be set to an array of direc-
-     tories to exclude from tracking.  HOME is always excluded.  Directories
-     must be full paths without trailing slashes.
+     The environment variable _Z_EXCLUDE_DIRS can be set to an array of
+     directories to exclude from tracking.  HOME is always excluded.  Each
+     element must be an absolute path, and if it ends with a slash, all its
+     subdirectories are also excluded.
 
 FILES
      Data is stored in $HOME/.z. This can be overridden by setting the _Z_DATA
@@ -131,4 +131,4 @@ SEE ALSO
 BUGS
      Please file bugs at <https://github.com/rupa/z/>.
 
-Unix                           January 29, 2013                           Unix
+Unix                           February 13, 2013                          Unix

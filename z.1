@@ -1,4 +1,4 @@
-.Dd January 29, 2013
+.Dd February 13, 2013
 .Dt Z \&1 "User Commands Manual"
 .Os Unix
 .Sh NAME
@@ -206,8 +206,8 @@ The environment variable
 .Ev _Z_EXCLUDE_DIRS
 can be set to an array of directories to exclude from tracking.
 .Ev HOME
-is always excluded.  Directories must be full paths without trailing
-slashes.
+is always excluded.  Each element must be an absolute path, and if it
+ends with a slash, all its subdirectories are also excluded.
 .Sh FILES
 Data is stored in
 .Pa $HOME/.z .  This can be overridden by setting the

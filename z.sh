@@ -55,7 +55,16 @@ _z() {
   # don't track excluded dirs
   local exclude
   for exclude in "${_Z_EXCLUDE_DIRS[@]}"; do
-   [ "$arg" = "$exclude" ] && return
+   case "$exclude" in
+    */)
+     case "$arg" in
+      "${exclude%/}"|"$exclude"*) return ;;
+     esac
+     ;;
+    *)
+     [ "$arg" = "$exclude" ] && return
+     ;;
+   esac
   done
 
   [ -f "$datafile" ] || touch "$datafile"
