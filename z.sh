@@ -23,6 +23,11 @@
 #   * z -l foo  # list top 10 dirs matching foo (sorted by frecency)
 #   * z -l | less # list all dirs (sorted by frecency)
 
+case $- in
+ *i*) ;;
+   *) echo 'ERROR: z.sh is meant to be sourced, not directly executed.'
+esac
+
 _z() {
 
  local datafile="${_Z_DATA:-$HOME/.z}"
