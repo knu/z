@@ -25,7 +25,7 @@
 
 case $- in
  *i*) ;;
-   *) echo 'ERROR: z.sh is meant to be sourced, not directly executed.'
+   *) echo 'ERROR: z.sh is meant to be sourced, not directly executed.' >&2
 esac
 
 _z() {
