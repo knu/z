@@ -126,9 +126,21 @@ FILES
      A man page (z.1) is provided.
 
 SEE ALSO
-     autojump(1), bash(1), cdargs(1), zshall(1)
+     autojump(1), bash(1), cdargs(1), j(1), zshall(1)
+
+AUTHORS
+     rupa deadwyler <rupa@lrrr.us>
+     Akinori MUSHA <knu@iDaemons.org>
+
+HISTORY
+     z was originally deveoloped by rupa deadwyler as a successor to j(1), a
+     python free alternative to Joel Schaerer's autojump(1).  The original
+     version is maintained at <https://github.com/rupa/z>.
+
+     This fork was started by Akinori MUSHA in early 2013 to improve zsh/bash
+     completion usability and search results.
 
 BUGS
-     Please file bugs at <https://github.com/rupa/z/>.
+     Please file bugs at <https://github.com/knu/z>.
 
 Unix                           February 13, 2013                          Unix
