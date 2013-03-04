@@ -276,7 +276,7 @@ if [ -n "$BASH_VERSION" ]; then
 
  # bash tab completion
  _z_bash_complete () {
-  COMPREPLY=($(
+  (( COMP_CWORD == 1 )) && COMPREPLY=($(
    _z_cmd -lr | awk -v q="${COMP_WORDS[$COMP_CWORD]}" -F"|" '
     BEGIN {
      if (q == tolower(q)) nocase = 1
