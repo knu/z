@@ -15,7 +15,7 @@ include_file () {
         if [ -n "$heredoc" ]; then
             case "$line" in
                 -*)
-                    printf "%s\n" "$line"
+                    printf '%s\n' "$line"
                     ;;
                 *)
                     echo "$line"
@@ -43,7 +43,7 @@ include_file () {
                 echo "$indent$line"
                 ;;
             -*)
-                printf "%s\n" "$indent$line"
+                printf '%s\n' "$indent$line"
                 ;;
             *)
                 echo
