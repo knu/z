@@ -29,11 +29,13 @@ case $- in
    *) echo 'ERROR: z.sh is meant to be sourced, not directly executed.' >&2
 esac
 
-_z() {
+: ${_Z_CMD:=z}
+
+_z_cmd () {
  . z.cli.sh "$@"
 }
 
-alias ${_Z_CMD:-z}='_z 2>&1'
+alias ${_Z_CMD}=_z_cmd
 
 [ "$_Z_NO_RESOLVE_SYMLINKS" ] || _Z_RESOLVE_SYMLINKS="-P"
 

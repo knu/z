@@ -29,7 +29,9 @@ case $- in
    *) echo 'ERROR: z.sh is meant to be sourced, not directly executed.' >&2
 esac
 
-_z() {
+: ${_Z_CMD:=z}
+
+_z_cmd () {
  local datafile="${_Z_DATA:-$HOME/.z}"
 
  # bail out if we don't own ~/.z (we're another user but our ENV is still set)
@@ -43,7 +45,7 @@ _z() {
    local arg
    if [ $# -gt 1 ]; then
     for arg; do
-     _z --add "$arg"
+     _z_cmd --add "$arg"
     done
    fi
    arg="$1"
@@ -110,7 +112,7 @@ _z() {
    local arg
    if [ $# -gt 1 ]; then
     for arg; do
-     _z --delete "$arg"
+     _z_cmd --delete "$arg"
     done
    fi
    arg="$1"
@@ -262,21 +264,18 @@ EOF
  esac
 }
 
-alias ${_Z_CMD:-z}='_z 2>&1'
+alias ${_Z_CMD}=_z_cmd
 
 [ "$_Z_NO_RESOLVE_SYMLINKS" ] || _Z_RESOLVE_SYMLINKS="-P"
 
 if [ -n "$BASH_VERSION" ]; then
- [ "$_Z_NO_PROMPT_COMMAND" ] || {
-  # bash populate directory list. avoid clobbering other PROMPT_COMMANDs.
-  echo $PROMPT_COMMAND | grep -q "_z --add"
-  [ $? -gt 0 ] && PROMPT_COMMAND='_z --add "$(pwd $_Z_RESOLVE_SYMLINKS 2>/dev/null)" 2>/dev/null;'"$PROMPT_COMMAND"
- }
+ [[ -n "$_Z_NO_PROMPT_COMMAND" || "$PROMPT_COMMAND" == *'_z_cmd --add '* ]] ||
+ PROMPT_COMMAND='_z_cmd --add "$(pwd $_Z_RESOLVE_SYMLINKS 2>/dev/null)" 2>/dev/null;'"$PROMPT_COMMAND"
 
  # bash tab completion
  _z_bash_complete () {
   COMPREPLY=($(
-   _z -lr | awk -v q="${COMP_WORDS[$COMP_CWORD]}" -F"|" '
+   _z_cmd -lr | awk -v q="${COMP_WORDS[$COMP_CWORD]}" -F"|" '
     BEGIN {
      if (q == tolower(q)) nocase = 1
      split(q, fnd, " ")
@@ -296,27 +295,26 @@ if [ -n "$BASH_VERSION" ]; then
   ))
  }
 
- complete -d -F _z_bash_complete ${_Z_CMD:-z}
+ complete -d -F _z_bash_complete ${_Z_CMD}
  return
 fi
 
 if [[ "${ZSH_VERSION-0.0}" != [0-3].* ]]; then
  [ "$_Z_NO_PROMPT_COMMAND" ] || {
-  # zsh populate directory list, avoid clobbering any other precmds
   if [ "$_Z_NO_RESOLVE_SYMLINKS" ]; then
-   _z_precmd() {
-    _z --add "${PWD:a}"
+   _z_precmd () {
+    _z_cmd --add "${PWD:a}"
    }
   else
-   _z_precmd() {
-    _z --add "${PWD:A}"
+   _z_precmd () {
+    _z_cmd --add "${PWD:A}"
    }
   fi
   precmd_functions+=(_z_precmd)
  }
 
  # zsh tab completion
- _z_zsh_tab_completion() {
+ _z () {
   emulate -L zsh
   setopt extended_glob
   local qword word x
@@ -325,7 +323,7 @@ if [[ "${ZSH_VERSION-0.0}" != [0-3].* ]]; then
    qword=${words[$CURRENT]}
    word=${~qword}
    list=(${(f)"$(
-    _z -lr | awk -v q="$word" -F"|" '
+    _z_cmd -lr | awk -v q="$word" -F"|" '
      BEGIN {
       if (q == tolower(q)) nocase = 1
       split(q, fnd, " ")
@@ -354,5 +352,5 @@ if [[ "${ZSH_VERSION-0.0}" != [0-3].* ]]; then
   fi
  }
 
- compdef _z_zsh_tab_completion _z
+ compdef _z _z_cmd
 fi

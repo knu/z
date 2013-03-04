@@ -1,20 +1,19 @@
 # -*- mode: sh; sh-shell: zsh; sh-basic-offset: 1 -*-
 [ "$_Z_NO_PROMPT_COMMAND" ] || {
- # zsh populate directory list, avoid clobbering any other precmds
  if [ "$_Z_NO_RESOLVE_SYMLINKS" ]; then
-  _z_precmd() {
-   _z --add "${PWD:a}"
+  _z_precmd () {
+   _z_cmd --add "${PWD:a}"
   }
  else
-  _z_precmd() {
-   _z --add "${PWD:A}"
+  _z_precmd () {
+   _z_cmd --add "${PWD:A}"
   }
  fi
  precmd_functions+=(_z_precmd)
 }
 
 # zsh tab completion
-_z_zsh_tab_completion() {
+_z () {
  emulate -L zsh
  setopt extended_glob
  local qword word x
@@ -23,7 +22,7 @@ _z_zsh_tab_completion() {
   qword=${words[$CURRENT]}
   word=${~qword}
   list=(${(f)"$(
-   _z -lr | awk -v q="$word" -F"|" '
+   _z_cmd -lr | awk -v q="$word" -F"|" '
     BEGIN {
      if (q == tolower(q)) nocase = 1
      split(q, fnd, " ")
@@ -52,4 +51,4 @@ _z_zsh_tab_completion() {
  fi
 }
 
-compdef _z_zsh_tab_completion _z
+compdef _z _z_cmd

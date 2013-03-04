@@ -1,14 +1,11 @@
 # -*- mode: sh; sh-shell: bash; sh-basic-offset: 1 -*-
-[ "$_Z_NO_PROMPT_COMMAND" ] || {
- # bash populate directory list. avoid clobbering other PROMPT_COMMANDs.
- echo $PROMPT_COMMAND | grep -q "_z --add"
- [ $? -gt 0 ] && PROMPT_COMMAND='_z --add "$(pwd $_Z_RESOLVE_SYMLINKS 2>/dev/null)" 2>/dev/null;'"$PROMPT_COMMAND"
-}
+[[ -n "$_Z_NO_PROMPT_COMMAND" || "$PROMPT_COMMAND" == *'_z_cmd --add '* ]] ||
+PROMPT_COMMAND='_z_cmd --add "$(pwd $_Z_RESOLVE_SYMLINKS 2>/dev/null)" 2>/dev/null;'"$PROMPT_COMMAND"
 
 # bash tab completion
 _z_bash_complete () {
  COMPREPLY=($(
-  _z -lr | awk -v q="${COMP_WORDS[$COMP_CWORD]}" -F"|" '
+  _z_cmd -lr | awk -v q="${COMP_WORDS[$COMP_CWORD]}" -F"|" '
    BEGIN {
     if (q == tolower(q)) nocase = 1
     split(q, fnd, " ")
@@ -28,4 +25,4 @@ _z_bash_complete () {
  ))
 }
 
-complete -d -F _z_bash_complete ${_Z_CMD:-z}
+complete -d -F _z_bash_complete ${_Z_CMD}

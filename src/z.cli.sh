@@ -12,7 +12,7 @@ case "$1" in
   local arg
   if [ $# -gt 1 ]; then
    for arg; do
-    _z --add "$arg"
+    _z_cmd --add "$arg"
    done
   fi
   arg="$1"
@@ -79,7 +79,7 @@ case "$1" in
   local arg
   if [ $# -gt 1 ]; then
    for arg; do
-    _z --delete "$arg"
+    _z_cmd --delete "$arg"
    done
   fi
   arg="$1"
