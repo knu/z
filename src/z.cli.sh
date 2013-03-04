@@ -52,7 +52,7 @@ case "$1" in
     time[path] = now
    }
    $2 >= 1 {
-    if( $1 == path ) {
+    if ($1 == path) {
      rank[$1] = $2 + 1
      time[$1] = now
     } else {
@@ -62,9 +62,9 @@ case "$1" in
     count += $2
    }
    END {
-    if( count > 6000 ) {
-     for( i in rank ) print i "|" 0.99*rank[i] "|" time[i] # aging
-    } else for( i in rank ) print i "|" rank[i] "|" time[i]
+    if (count > 6000) {
+     for (i in rank) print i "|" 0.99 * rank[i] "|" time[i] # aging
+    } else for (i in rank) print i "|" rank[i] "|" time[i]
    }
   ' 2>/dev/null >| "$tempfile"
   if [ $? -ne 0 -a -f "$datafile" ]; then
@@ -107,7 +107,8 @@ case "$1" in
   # list/go
   local opt OPTIND=1
   local list rev typ fnd cd limit
-  while getopts hlrt opt; do case "$opt" in
+  while getopts hlrt opt; do
+   case "$opt" in
     l) list=1;;
     r) typ="rank";;
     t) typ="recent";;
@@ -121,8 +122,9 @@ z [-lrt] [args...]
 
     Omitting args implies -l.
 EOF
-      [ $opt = h ]; return;;
-   esac; done
+     [ $opt = h ]; return;;
+   esac
+  done
   shift $((OPTIND-1))
 
   [ $# -eq 0 ] && list=1
@@ -147,41 +149,41 @@ EOF
    [ -d "${line%%\|*}" ] && echo "$line"
   done < "$datafile" | awk -v t="$(date +%s)" -v list="$list" -v typ="$typ" -v q="$fnd" -v limit="$limit" -F"|" '
    function frecent(rank, time) {
-    dx = t-time
-    if( dx < 3600 ) return rank*4
-    if( dx < 86400 ) return rank*2
-    if( dx < 604800 ) return rank/2
+    dx = t - time
+    if (dx < 3600) return rank * 4
+    if (dx < 86400) return rank * 2
+    if (dx < 604800) return rank / 2
     return rank/4
    }
    function output(files, toopen, override) {
-    if( list ) {
-     if( override ) {
+    if (list) {
+     if (override) {
       printf "%-10s %s\n", max, override
-      if( limit ) limit--
+      if (limit) limit--
      }
      cmd = "sort -nr"
-     if( limit ) cmd = cmd " | head -n" limit
-     for( i in files ) {
+     if (limit) cmd = cmd " | head -n" limit
+     for (i in files) {
       file = files[i]
-      if( file > max ) file = max
-      if( file && i != override ) printf "%-10s %s\n", file, i | cmd
+      if (file > max) file = max
+      if (file && i != override) printf "%-10s %s\n", file, i | cmd
      }
     } else {
-     if( override ) toopen = override
+     if (override) toopen = override
      print toopen
     }
    }
    function common(matches) {
     # shortest match
-    for( i in matches ) {
-     if( matches[i] && (!short || length(i) < length(short)) ) short = i
+    for (i in matches) {
+     if (matches[i] && (!short || length(i) < length(short))) short = i
     }
-    if( short == "/" ) return
+    if (short == "/") return
     # shortest match must be common to each match. escape special characters in
     # a copy when testing, so we can return the original.
     clean_short = short
     gsub(/[\(\)\[\]\|]/, "\\\\&", clean_short)
-    for( i in matches ) if( matches[i] && i !~ clean_short ) return
+    for (i in matches) if (matches[i] && i !~ clean_short) return
     return short
    }
    BEGIN {
@@ -191,32 +193,32 @@ EOF
     home = ENVIRON["HOME"]
    }
    {
-    if( typ == "rank" ) {
+    if (typ == "rank") {
      f = $2
-    } else if( typ == "recent" ) {
-     f = $3-t
+    } else if (typ == "recent") {
+     f = $3 - t
     } else f = frecent($2, $3)
     wcase[$1] = nocase[$1] = f
     x = $1
-    if( q !~ /^\// && substr(x,0,length(home)+1) == home "/" ) {
-     x = substr(x,length(home)+1)
+    if (q !~ /^\// && substr(x, 0, length(home) + 1) == home "/") {
+     x = substr(x, length(home) + 1)
     }
-    for( i in a ) {
-     if( !index(x, a[i]) ) delete wcase[$1]
-     if( !index(tolower(x), tolower(a[i])) ) delete nocase[$1]
+    for (i in a) {
+     if (!index(x, a[i])) delete wcase[$1]
+     if (!index(tolower(x), tolower(a[i]))) delete nocase[$1]
     }
-    if( wcase[$1] && wcase[$1] > oldf ) {
+    if (wcase[$1] && wcase[$1] > oldf) {
      cx = $1
      oldf = wcase[$1]
-    } else if( nocase[$1] && nocase[$1] > noldf ) {
+    } else if (nocase[$1] && nocase[$1] > noldf) {
      ncx = $1
      noldf = nocase[$1]
     }
    }
    END {
-    if( cx ) {
+    if (cx) {
      output(wcase, cx, common(wcase))
-    } else if( ncx ) output(nocase, ncx, common(nocase))
+    } else if (ncx) output(nocase, ncx, common(nocase))
    }
   ')"
   [ $? -gt 0 ] && return
