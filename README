@@ -96,9 +96,9 @@ NOTES
      unexpected behavior if the last argument to z begins with /.
 
 ENVIRONMENT
-     A function _z() is defined.
+     A function _z_cmd() is defined.
 
-     The contents of the variable _Z_CMD is aliased to `_z 2>&1'.  If not set,
+     The contents of the variable _Z_CMD is aliased to `_z_cmd'.  If not set,
      _Z_CMD defaults to z.  The environment variable _Z_DATA can be used to
      control the data file location.  If it is not defined, the location
      defaults to `$HOME/.z'.
