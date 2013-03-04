@@ -6,35 +6,63 @@ SPC=' '
 TAB='	'
 LF='
 '
+MODECOMMENT=
 
-while IFS=$LF read -r line; do
-    IFS="$SPC$TAB$LF" set -- $line
-    if [ "$1" = . -a -f ./"$2" ]; then
-        indent="${line%%[^$SPC$TAB]*}"
-        while IFS=$LF read -r line; do
+include_file () {
+    local file="$1" indent="$2" heredoc=
+
+    while IFS=$LF read -r line; do
+        if [ -n "$heredoc" ]; then
             case "$line" in
-                '# -*- '*)
-                    continue
-                    ;;
-                *[^$SPC$TAB]*)
-                    echo "$indent$line"
-                    ;;
                 -*)
                     printf %s "$line"
                     ;;
                 *)
-                    echo
+                    echo "$line"
                     ;;
             esac
-        done < ./"$2"
-    else
+            if [ "$line" = "$heredoc" ]; then
+                heredoc=
+            fi
+            continue
+        fi
+        IFS="$SPC$TAB$LF" set -- $line
+        if [ "$1" = . -a -f ./"$2" ]; then
+            include_file ./"$2" "$indent${line%%[^$SPC$TAB]*}"
+            continue
+        fi
         case "$line" in
+            '# -*- '*)
+                if [ -z "$MODECOMMENT" ]; then
+                    echo "$indent$line"
+                    MODECOMMENT=t
+                fi
+                continue
+                ;;
+            *[^$SPC$TAB]*)
+                echo "$indent$line"
+                ;;
             -*)
-                printf %s "$line"
+                printf %s "$indent$line"
                 ;;
             *)
-                echo "$line"
+                echo
                 ;;
         esac
-    fi
-done < z.main.sh > ../z.sh
+        for arg; do
+            case "$arg" in
+                \<\<*\"|\<\<\'*\')
+                    heredoc="${arg#<<?}"
+                    heredoc="${heredoc%?}"
+                    break
+                    ;;
+                \<\<*)
+                    heredoc="${arg#<<}"
+                    break
+                    ;;
+            esac
+        done
+    done < "$file"
+}
+
+include_file z.main.sh > ../z.sh
