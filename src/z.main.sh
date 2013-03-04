@@ -290,52 +290,10 @@ alias ${_Z_CMD:-z}='_z 2>&1'
 [ "$_Z_NO_RESOLVE_SYMLINKS" ] || _Z_RESOLVE_SYMLINKS="-P"
 
 if [ -n "$BASH_VERSION" ]; then
- # bash tab completion
- _z_bash_complete () {
-  COMPREPLY=(`_z --complete "${COMP_WORDS[$COMP_CWORD]}"`)
- }
- complete -d -F _z_bash_complete ${_Z_CMD:-z}
- [ "$_Z_NO_PROMPT_COMMAND" ] || {
-  # bash populate directory list. avoid clobbering other PROMPT_COMMANDs.
-  echo $PROMPT_COMMAND | grep -q "_z --add"
-  [ $? -gt 0 ] && PROMPT_COMMAND='_z --add "$(pwd $_Z_RESOLVE_SYMLINKS 2>/dev/null)" 2>/dev/null;'"$PROMPT_COMMAND"
- }
+ . z.interactive.bash
  return
 fi
 
 if [[ "${ZSH_VERSION-0.0}" != [0-3].* ]]; then
- [ "$_Z_NO_PROMPT_COMMAND" ] || {
-  # zsh populate directory list, avoid clobbering any other precmds
-  if [ "$_Z_NO_RESOLVE_SYMLINKS" ]; then
-   _z_precmd() {
-    _z --add "${PWD:a}"
-   }
-  else
-   _z_precmd() {
-    _z --add "${PWD:A}"
-   }
-  fi
-  precmd_functions+=(_z_precmd)
- }
- # zsh tab completion
- _z_zsh_tab_completion() {
-  emulate -L zsh
-  setopt extended_glob
-  local qword word x
-  local -a list qlist
-  if (( CURRENT == 2 )); then
-   qword=${words[$CURRENT]}
-   word=${~qword}
-   list=(${(f)"$(_z --complete "$word")"})
-   for x in $list; do
-    hash -d x= qword= word=
-    qlist+=(${(D)x})
-   done
-   _alternative \
-    'z:z stack:compadd -d qlist -U -l -Q -- "${qlist[@]}"' \
-    'd:directory:_path_files -/'
-   compstate[insert]=menu
-  fi
- }
- compdef _z_zsh_tab_completion _z
+ . z.interactive.zsh
 fi
