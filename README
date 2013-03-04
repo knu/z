@@ -86,14 +86,17 @@ NOTES
      but should probably be configurable or reconsidered.
 
    Tab Completion:
-     z supports tab completion.  After any number of arguments, press TAB to
-     complete on directories that match each argument.  Due to limitations of
-     the completion implementations, only the last argument will be completed
-     in the shell.
+     z supports tab completion.  After typing a substring or a glob pattern,
+     press TAB to complete on directories that matches the pattern.  A double
+     slash at the beginning or the end of a pattern has special meanings.  The
+     first slash of a double slash at the beginning denotes the beginning of a
+     path, and a double slash at the end denotes the end of a path.  That is,
+     a pattern `//var' matches /var/log but does not match /home/user/var/log,
+     and a pattern `src//' matches /home/user/src/screen/src but does not
+     match /home/user/src/screen.
 
-     Internally, z decides you've requested a completion if the last argument
-     passed is an absolute path to an existing directory.  This may cause
-     unexpected behavior if the last argument to z begins with /.
+     This pattern match feature in completion is currently implemented for zsh
+     only.
 
 ENVIRONMENT
      A function _z_cmd() is defined.

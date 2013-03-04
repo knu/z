@@ -16,33 +16,28 @@
 _z () {
  emulate -L zsh
  setopt extended_glob
- local qword word x
- local -a list qlist
+ local pat nohome score dir
+ local -a qlist
  if (( CURRENT == 2 )); then
-  qword=${words[$CURRENT]}
-  word=${~qword}
-  list=(${(f)"$(
-   _z_cmd -lr | awk -v q="$word" -F"|" '
-    BEGIN {
-     if (q == tolower(q)) nocase = 1
-     split(q, fnd, " ")
-     home = ENVIRON["HOME"]
-    }
-    {
-     sub(/^[^\/]+/, "", $0)
-     x = $0
-     if (q !~ /^\// && substr(x, 0, length(home) + 1) == home "/") {
-      x = substr(x, length(home) + 1)
-     }
-     if (nocase) x = tolower(x)
-     for (i in fnd) if (!index(x, fnd[i])) next
-     print
-    }
-   ' 2>/dev/null
-  )"})
-  for x in $list; do
-   hash -d x= qword= word=
-   qlist+=(${(D)x})
+  pat=${words[$CURRENT]}
+  if [[ $pat == //* ]]; then
+   pat="/${pat##/#}"
+  else
+   nohome=t
+   pat="*$pat"
+  fi
+  if [[ $pat == *// ]]; then
+   pat="${pat%%/#}"
+  else
+   pat="$pat*"
+  fi
+  pat="(#l)$pat"
+  _z_cmd -lr | while read -r score dir; do
+   x="${dir#"${nohome:+$HOME/}"}"
+   if [[ "$x" == ${~pat} ]]; then
+    hash -d x= dir=
+    qlist+=(${(D)dir})
+   fi
   done
   _alternative \
    'z:z stack:compadd -d qlist -U -l -Q -- "${qlist[@]}"' \
