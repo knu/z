@@ -135,28 +135,6 @@ _z() {
    touch "$datafile"
   fi
   ;;
- # tab completion
- --complete)
-  shift
-
-  _z -lr | awk -v q="$1" -F"|" '
-   BEGIN {
-    if( q == tolower(q) ) nocase = 1
-    split(q,fnd," ")
-    home = ENVIRON["HOME"]
-   }
-   {
-    sub(/^[^\/]+/, "", $0)
-    x = $0
-    if( q !~ /^\// && substr(x,0,length(home)+1) == home "/" ) {
-     x = substr(x,length(home)+1)
-    }
-    if( nocase ) x = tolower(x)
-    for( i in fnd ) if (!index(x, fnd[i])) next
-    print
-   }
-  ' 2>/dev/null
-  ;;
  *)
   # list/go
   local opt OPTIND=1

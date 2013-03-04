@@ -135,28 +135,6 @@ _z() {
    touch "$datafile"
   fi
   ;;
- # tab completion
- --complete)
-  shift
-
-  _z -lr | awk -v q="$1" -F"|" '
-   BEGIN {
-    if( q == tolower(q) ) nocase = 1
-    split(q,fnd," ")
-    home = ENVIRON["HOME"]
-   }
-   {
-    sub(/^[^\/]+/, "", $0)
-    x = $0
-    if( q !~ /^\// && substr(x,0,length(home)+1) == home "/" ) {
-     x = substr(x,length(home)+1)
-    }
-    if( nocase ) x = tolower(x)
-    for( i in fnd ) if (!index(x, fnd[i])) next
-    print
-   }
-  ' 2>/dev/null
-  ;;
  *)
   # list/go
   local opt OPTIND=1
@@ -290,16 +268,36 @@ alias ${_Z_CMD:-z}='_z 2>&1'
 [ "$_Z_NO_RESOLVE_SYMLINKS" ] || _Z_RESOLVE_SYMLINKS="-P"
 
 if [ -n "$BASH_VERSION" ]; then
- # bash tab completion
- _z_bash_complete () {
-  COMPREPLY=(`_z --complete "${COMP_WORDS[$COMP_CWORD]}"`)
- }
- complete -d -F _z_bash_complete ${_Z_CMD:-z}
  [ "$_Z_NO_PROMPT_COMMAND" ] || {
   # bash populate directory list. avoid clobbering other PROMPT_COMMANDs.
   echo $PROMPT_COMMAND | grep -q "_z --add"
   [ $? -gt 0 ] && PROMPT_COMMAND='_z --add "$(pwd $_Z_RESOLVE_SYMLINKS 2>/dev/null)" 2>/dev/null;'"$PROMPT_COMMAND"
  }
+
+ # bash tab completion
+ _z_bash_complete () {
+  COMPREPLY=($(
+   _z -lr | awk -v q="${COMP_WORDS[$COMP_CWORD]}" -F"|" '
+    BEGIN {
+     if (q == tolower(q)) nocase = 1
+     split(q, fnd, " ")
+     home = ENVIRON["HOME"]
+    }
+    {
+     sub(/^[^\/]+/, "", $0)
+     x = $0
+     if (q !~ /^\// && substr(x, 0, length(home) + 1) == home "/") {
+      x = substr(x, length(home) + 1)
+     }
+     if (nocase) x = tolower(x)
+     for (i in fnd) if (!index(x, fnd[i])) next
+     print
+    }
+   ' 2>/dev/null
+  ))
+ }
+
+ complete -d -F _z_bash_complete ${_Z_CMD:-z}
  return
 fi
 
@@ -317,6 +315,7 @@ if [[ "${ZSH_VERSION-0.0}" != [0-3].* ]]; then
   fi
   precmd_functions+=(_z_precmd)
  }
+
  # zsh tab completion
  _z_zsh_tab_completion() {
   emulate -L zsh
@@ -326,7 +325,25 @@ if [[ "${ZSH_VERSION-0.0}" != [0-3].* ]]; then
   if (( CURRENT == 2 )); then
    qword=${words[$CURRENT]}
    word=${~qword}
-   list=(${(f)"$(_z --complete "$word")"})
+   list=(${(f)"$(
+    _z -lr | awk -v q="$word" -F"|" '
+     BEGIN {
+      if (q == tolower(q)) nocase = 1
+      split(q, fnd, " ")
+      home = ENVIRON["HOME"]
+     }
+     {
+      sub(/^[^\/]+/, "", $0)
+      x = $0
+      if (q !~ /^\// && substr(x, 0, length(home) + 1) == home "/") {
+       x = substr(x, length(home) + 1)
+      }
+      if (nocase) x = tolower(x)
+      for (i in fnd) if (!index(x, fnd[i])) next
+      print
+     }
+    ' 2>/dev/null
+   )"})
    for x in $list; do
     hash -d x= qword= word=
     qlist+=(${(D)x})
@@ -337,5 +354,6 @@ if [[ "${ZSH_VERSION-0.0}" != [0-3].* ]]; then
    compstate[insert]=menu
   fi
  }
+
  compdef _z_zsh_tab_completion _z
 fi
