@@ -23,6 +23,7 @@
 #   * z -t foo  # cd to most recently accessed dir matching foo
 #   * z -l foo  # list top 10 dirs matching foo (sorted by frecency)
 #   * z -l | less # list all dirs (sorted by frecency)
+#   * z -c foo  # restrict matches to subdirs of $PWD
 
 case $- in
  *i*) ;;
@@ -140,15 +141,17 @@ _z_cmd () {
    # list/go
    local opt OPTIND=1
    local list rev typ fnd cd limit
-   while getopts hlrt opt; do
+   while getopts hclrt opt; do
     case "$opt" in
+     c) fnd="/$PWD/";;
      l) list=1;;
      r) typ="rank";;
      t) typ="recent";;
      *) cat <<EOF >&2
-$_Z_CMD [-lrt] [args...]
+$_Z_CMD [-clrt] [args...]
 
     -h          show this help
+    -c          restrict matches to subdirectories of the current directory
     -l          list dirs (matching args if given)
     -r          sort dirs by rank
     -t          sort dirs by recency
@@ -170,7 +173,7 @@ EOF
     esac
    fi
 
-   fnd="$*"
+   fnd="${fnd:+$fnd }$*"
 
    # no file yet
    [ -f "$datafile" ] || return

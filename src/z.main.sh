@@ -23,6 +23,7 @@
 #   * z -t foo  # cd to most recently accessed dir matching foo
 #   * z -l foo  # list top 10 dirs matching foo (sorted by frecency)
 #   * z -l | less # list all dirs (sorted by frecency)
+#   * z -c foo  # restrict matches to subdirs of $PWD
 
 case $- in
  *i*) ;;

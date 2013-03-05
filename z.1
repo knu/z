@@ -6,7 +6,7 @@
 .Nd jump around
 .Sh SYNOPSIS
 .Nm z
-.Op Fl hlrt
+.Op Fl hclrt
 .Op Ar string ...
 .Sh AVAILABILITY
 bash, zsh
@@ -60,6 +60,9 @@ directory under your home directory.
 .Bl -tag -compact -width "-l"
 .It Fl h
 Show a brief help message.
+.Pp
+.It Fl c
+Restrict matches to subdirectories of the current directory.
 .Pp
 .It Fl l
 List only.

@@ -4,7 +4,7 @@ NAME
      z -- jump around
 
 SYNOPSIS
-     z [-hlrt] [string ...]
+     z [-hclrt] [string ...]
 
 AVAILABILITY
      bash, zsh
@@ -37,6 +37,8 @@ DESCRIPTION
 
 OPTIONS
      -h  Show a brief help message.
+
+     -c  Restrict matches to subdirectories of the current directory.
 
      -l  List only.
 
