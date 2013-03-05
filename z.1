@@ -24,10 +24,21 @@ Each pattern is a substring that the directory to look for must
 contain, not a regular expression like in the original version nor a
 glob pattern that you can use in shell completion described below.
 .Pp
-A double slash at the beginning or at the end of a pattern has special
-meanings.  The first slash of a double slash at the beginning denotes
-the beginning of a path, and a double slash at the end denotes the end
-of a path.  That is, a pattern
+For convenience, a trailing slash in a pattern is treated specially so
+that the pattern also matches directories ending with the pattern
+string minus the trailing slash.  That is, for instance, a pattern
+.Sq Ic log/
+matches
+.Pa /var/log
+as well as
+.Pa /service/nginx/log/main ,
+but not
+.Pa /home/user/logs .
+.Pp
+In addition to this, a double slash at the beginning or at the end of
+a pattern has special meanings.  A double slash at the beginning
+denotes the root directory, and a double slash at the end denotes the
+end of a path.  That is, a pattern
 .Sq Ic //var
 matches
 .Pa /var/log
@@ -40,7 +51,7 @@ matches
 but does not match
 .Pa /home/user/src/screen .
 .Pp
-In this fork, the
+The
 .Pa $HOME
 part in a directory name is excluded before matching so that a word or
 substring that is in your account name does not hit every single
@@ -264,6 +275,10 @@ The original version is maintained at
 .Pp
 This fork was started by Akinori MUSHA in early 2013 to improve
 zsh/bash completion usability and search results.
+.Pp
+The pattern matching conventions described above are exclusive
+features of this fork, while the data file format and the core
+algorithm are kept compatible with those of the original version.
 .Sh BUGS
 Please file bugs at
 .Aq Pa https://github.com/knu/z .

@@ -18,16 +18,22 @@ DESCRIPTION
      not a regular expression like in the original version nor a glob pattern
      that you can use in shell completion described below.
 
-     A double slash at the beginning or at the end of a pattern has special
-     meanings.  The first slash of a double slash at the beginning denotes the
-     beginning of a path, and a double slash at the end denotes the end of a
+     For convenience, a trailing slash in a pattern is treated specially so
+     that the pattern also matches directories ending with the pattern string
+     minus the trailing slash.  That is, for instance, a pattern `log/'
+     matches /var/log as well as /service/nginx/log/main, but not
+     /home/user/logs.
+
+     In addition to this, a double slash at the beginning or at the end of a
+     pattern has special meanings.  A double slash at the beginning denotes
+     the root directory, and a double slash at the end denotes the end of a
      path.  That is, a pattern `//var' matches /var/log but does not match
      /home/user/var/log, and a pattern `src//' matches
      /home/user/src/screen/src but does not match /home/user/src/screen.
 
-     In this fork, the $HOME part in a directory name is excluded before
-     matching so that a word or substring that is in your account name does
-     not hit every single directory under your home directory.
+     The $HOME part in a directory name is excluded before matching so that a
+     word or substring that is in your account name does not hit every single
+     directory under your home directory.
 
 OPTIONS
      -h  Show a brief help message.
@@ -152,6 +158,10 @@ HISTORY
 
      This fork was started by Akinori MUSHA in early 2013 to improve zsh/bash
      completion usability and search results.
+
+     The pattern matching conventions described above are exclusive features
+     of this fork, while the data file format and the core algorithm are kept
+     compatible with those of the original version.
 
 BUGS
      Please file bugs at <https://github.com/knu/z>.

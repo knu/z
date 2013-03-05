@@ -240,11 +240,11 @@ EOF
      } else f = frecent($2, $3)
      wcase[$1] = nocase[$1] = f
      for (i in a) {
-      x = $1
+      x = $1 "/"
       pat = a[i]
       pfx = sfx = 0
       if (sub(/^\/\//, "/", pat)) pfx = 1
-      if (sub(/\/\/$/, "",  pat)) sfx = 1
+      if (sub(/\/\/$/, "/", pat)) sfx = 1
       if (!pfx && substr(x, 1, length(homepfx)) == homepfx)
        x = substr(x, length(homepfx) - 1)
       if (!xmatch(x, pat, 0, pfx, sfx)) delete wcase[$1]
@@ -296,7 +296,7 @@ if [ -n "$BASH_VERSION" ]; then
     pat="*$pat"
    fi
    if [[ $pat == *// ]]; then
-    pat="${pat%//}"
+    pat="${pat%//}/"
    else
     pat="$pat*"
    fi
@@ -308,7 +308,7 @@ if [ -n "$BASH_VERSION" ]; then
       awk -v s="$pat" 'BEGIN{exit(s!=tolower(s))}'
      fi && shopt -s nocasematch
      _z_cmd -lr | while IFS=' ' read -r score dir; do
-      x="$dir"
+      x="$dir/"
       [[ -n "$nohome" && "$x" == "$HOME/"* ]] && x="${x#"$HOME"}"
       if [[ "$x" == $pat ]]; then
        printf '%s\n' "$dir"
@@ -350,13 +350,13 @@ if [[ "${ZSH_VERSION-0.0}" != [0-3].* ]]; then
     pat="*$pat"
    fi
    if [[ $pat == *// ]]; then
-    pat="${pat%%/#}"
+    pat="${pat%%/#}/"
    else
     pat="$pat*"
    fi
    pat="(#l)$pat"
    _z_cmd -lr | while read -r score dir; do
-    x="$dir"
+    x="$dir/"
     [[ -n "$nohome" && "$x" == "$HOME/"* ]] && x="${x#"$HOME"}"
     if [[ "$x" == ${~pat} ]]; then
      hash -d x= dir=

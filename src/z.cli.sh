@@ -207,11 +207,11 @@ EOF
     } else f = frecent($2, $3)
     wcase[$1] = nocase[$1] = f
     for (i in a) {
-     x = $1
+     x = $1 "/"
      pat = a[i]
      pfx = sfx = 0
      if (sub(/^\/\//, "/", pat)) pfx = 1
-     if (sub(/\/\/$/, "",  pat)) sfx = 1
+     if (sub(/\/\/$/, "/", pat)) sfx = 1
      if (!pfx && substr(x, 1, length(homepfx)) == homepfx)
       x = substr(x, length(homepfx) - 1)
      if (!xmatch(x, pat, 0, pfx, sfx)) delete wcase[$1]
