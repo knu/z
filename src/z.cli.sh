@@ -192,6 +192,13 @@ EOF
     split(q, a, " ")
     homepfx = ENVIRON["HOME"] "/"
    }
+   function xmatch(s, pat, nc, pfx, sfx,  i) {
+    if (nc) { s = tolower(s); pat = tolower(pat); }
+    i = index(s, pat)
+    return i && \
+           (!pfx || i == 1) && \
+           (!sfx || i - 1 + length(pat) == length(s))
+   }
    {
     if (typ == "rank") {
      f = $2
@@ -199,13 +206,16 @@ EOF
      f = $3 - t
     } else f = frecent($2, $3)
     wcase[$1] = nocase[$1] = f
-    x = $1
-    if (q !~ /^\// && substr(x, 1, length(homepfx)) == homepfx) {
-     x = substr(x, length(homepfx) - 1)
-    }
     for (i in a) {
-     if (!index(x, a[i])) delete wcase[$1]
-     if (!index(tolower(x), tolower(a[i]))) delete nocase[$1]
+     x = $1
+     pat = a[i]
+     pfx = sfx = 0
+     if (sub(/^\/\//, "/", pat)) pfx = 1
+     if (sub(/\/\/$/, "",  pat)) sfx = 1
+     if (!pfx && substr(x, 1, length(homepfx)) == homepfx)
+      x = substr(x, length(homepfx) - 1)
+     if (!xmatch(x, pat, 0, pfx, sfx)) delete wcase[$1]
+     if (!xmatch(x, pat, 1, pfx, sfx)) delete nocase[$1]
     }
     if (wcase[$1] && wcase[$1] > oldf) {
      cx = $1
