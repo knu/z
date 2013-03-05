@@ -26,7 +26,8 @@ __z_cmd () {
      awk -v s="$pat" 'BEGIN{exit(s!=tolower(s))}'
     fi && shopt -s nocasematch
     _z_cmd -lr | while IFS=' ' read -r score dir; do
-     x="${dir#"${nohome:+$HOME/}"}"
+     x="$dir"
+     [[ -n "$nohome" && "$x" == "$HOME/"* ]] && x="${x#"$HOME"}"
      if [[ "$x" == $pat ]]; then
       printf '%s\n' "$dir"
      fi

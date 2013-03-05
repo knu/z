@@ -32,7 +32,8 @@ _z_stack () {
   fi
   pat="(#l)$pat"
   _z_cmd -lr | while read -r score dir; do
-   x="${dir#"${nohome:+$HOME/}"}"
+   x="$dir"
+   [[ -n "$nohome" && "$x" == "$HOME/"* ]] && x="${x#"$HOME"}"
    if [[ "$x" == ${~pat} ]]; then
     hash -d x= dir=
     qlist+=(${(D)dir})

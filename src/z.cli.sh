@@ -190,7 +190,7 @@ EOF
     max = 9999999999
     oldf = noldf = -max
     split(q, a, " ")
-    home = ENVIRON["HOME"]
+    homepfx = ENVIRON["HOME"] "/"
    }
    {
     if (typ == "rank") {
@@ -200,8 +200,8 @@ EOF
     } else f = frecent($2, $3)
     wcase[$1] = nocase[$1] = f
     x = $1
-    if (q !~ /^\// && substr(x, 0, length(home) + 1) == home "/") {
-     x = substr(x, length(home) + 1)
+    if (q !~ /^\// && substr(x, 1, length(homepfx)) == homepfx) {
+     x = substr(x, length(homepfx) - 1)
     }
     for (i in a) {
      if (!index(x, a[i])) delete wcase[$1]
