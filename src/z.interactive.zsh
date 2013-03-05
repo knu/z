@@ -13,7 +13,7 @@
 }
 
 # zsh tab completion
-_z () {
+__z_cmd () {
  emulate -L zsh
  setopt extended_glob
  local pat nohome score dir
@@ -46,4 +46,4 @@ _z () {
  fi
 }
 
-compdef _z _z_cmd
+compdef __z_cmd _z_cmd
