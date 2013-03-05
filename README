@@ -100,6 +100,9 @@ NOTES
      /home/user/var/log, and a pattern `src//' matches
      /home/user/src/screen/src but does not match /home/user/src/screen.
 
+     For zsh, z also enhances the completion for the cd command so you don't
+     even need to learn about z at all.
+
 ENVIRONMENT
      A function _z_cmd() is defined.
 
@@ -148,4 +151,4 @@ HISTORY
 BUGS
      Please file bugs at <https://github.com/knu/z>.
 
-Unix                           February 13, 2013                          Unix
+Unix                             March 5, 2013                            Unix
