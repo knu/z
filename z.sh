@@ -368,7 +368,6 @@ if [[ "${ZSH_VERSION-0.0}" != [0-3].* ]]; then
 
  _cd_z () {
   local expl
-  emulate -L zsh
   $_cd_z_super
   _wanted z expl 'z stack' _z_stack
  }
