@@ -325,8 +325,7 @@ if [[ "${ZSH_VERSION-0.0}" != [0-3].* ]]; then
   precmd_functions+=(_z_precmd)
  }
 
- # zsh tab completion
- __z_cmd () {
+ _z_stack () {
   emulate -L zsh
   setopt extended_glob
   local pat nohome score dir
@@ -352,12 +351,27 @@ if [[ "${ZSH_VERSION-0.0}" != [0-3].* ]]; then
      qlist+=(${(D)dir})
     fi
    done
-   _alternative \
-    'z:z stack:compadd -d qlist -U -l -Q -- "${qlist[@]}"' \
-    'd:directory:_path_files -/'
+   compadd -d qlist -U -Q "$@" -- "${qlist[@]}"
    compstate[insert]=menu
   fi
  }
 
+ __z_cmd () {
+  _alternative \
+   'z:z stack:_z_stack -l' \
+   'd:directory:_path_files -/'
+ }
+
  compdef __z_cmd _z_cmd
+
+ typeset -g _cd_z_super="${_comps[cd]:-_cd}"
+
+ _cd_z () {
+  local expl
+  emulate -L zsh
+  $_cd_z_super
+  _wanted z expl 'z stack' _z_stack
+ }
+
+ compdef _cd_z cd
 fi
