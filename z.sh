@@ -223,7 +223,14 @@ EOF
      max = 9999999999
      oldf = noldf = -max
      split(q, a, " ")
-     home = ENVIRON["HOME"]
+     homepfx = ENVIRON["HOME"] "/"
+    }
+    function xmatch(s, pat, nc, pfx, sfx,  i) {
+     if (nc) { s = tolower(s); pat = tolower(pat); }
+     i = index(s, pat)
+     return i && \
+            (!pfx || i == 1) && \
+            (!sfx || i - 1 + length(pat) == length(s))
     }
     {
      if (typ == "rank") {
@@ -232,13 +239,16 @@ EOF
       f = $3 - t
      } else f = frecent($2, $3)
      wcase[$1] = nocase[$1] = f
-     x = $1
-     if (q !~ /^\// && substr(x, 0, length(home) + 1) == home "/") {
-      x = substr(x, length(home) + 1)
-     }
      for (i in a) {
-      if (!index(x, a[i])) delete wcase[$1]
-      if (!index(tolower(x), tolower(a[i]))) delete nocase[$1]
+      x = $1
+      pat = a[i]
+      pfx = sfx = 0
+      if (sub(/^\/\//, "/", pat)) pfx = 1
+      if (sub(/\/\/$/, "",  pat)) sfx = 1
+      if (!pfx && substr(x, 1, length(homepfx)) == homepfx)
+       x = substr(x, length(homepfx) - 1)
+      if (!xmatch(x, pat, 0, pfx, sfx)) delete wcase[$1]
+      if (!xmatch(x, pat, 1, pfx, sfx)) delete nocase[$1]
      }
      if (wcase[$1] && wcase[$1] > oldf) {
       cx = $1
@@ -298,7 +308,8 @@ if [ -n "$BASH_VERSION" ]; then
       awk -v s="$pat" 'BEGIN{exit(s!=tolower(s))}'
      fi && shopt -s nocasematch
      _z_cmd -lr | while IFS=' ' read -r score dir; do
-      x="${dir#"${nohome:+$HOME/}"}"
+      x="$dir"
+      [[ -n "$nohome" && "$x" == "$HOME/"* ]] && x="${x#"$HOME"}"
       if [[ "$x" == $pat ]]; then
        printf '%s\n' "$dir"
       fi
@@ -345,7 +356,8 @@ if [[ "${ZSH_VERSION-0.0}" != [0-3].* ]]; then
    fi
    pat="(#l)$pat"
    _z_cmd -lr | while read -r score dir; do
-    x="${dir#"${nohome:+$HOME/}"}"
+    x="$dir"
+    [[ -n "$nohome" && "$x" == "$HOME/"* ]] && x="${x#"$HOME"}"
     if [[ "$x" == ${~pat} ]]; then
      hash -d x= dir=
      qlist+=(${(D)dir})

@@ -12,7 +12,18 @@ AVAILABILITY
 DESCRIPTION
      Tracks your most used directories, based on `frecency'.  After a short
      learning phase, z will take you to the most `frecent' directory that
-     matches ALL of the strings given on the command line.
+     matches all of the patterns given on the command line.
+
+     Each pattern is a substring that the directory to look for must contain,
+     not a regular expression like in the original version nor a glob pattern
+     that you can use in shell completion described below.
+
+     A double slash at the beginning or at the end of a pattern has special
+     meanings.  The first slash of a double slash at the beginning denotes the
+     beginning of a path, and a double slash at the end denotes the end of a
+     path.  That is, a pattern `//var' matches /var/log but does not match
+     /home/user/var/log, and a pattern `src//' matches
+     /home/user/src/screen/src but does not match /home/user/src/screen.
 
      In this fork, the $HOME part in a directory name is excluded before
      matching so that a word or substring that is in your account name does
@@ -89,16 +100,10 @@ NOTES
      priority.  This has been in effect, if undocumented, for quite some time,
      but should probably be configurable or reconsidered.
 
-   Tab Completion:
-     z supports tab completion.  After typing a substring or a glob pattern,
-     press TAB to complete on directories that matches the pattern.
-
-     A double slash at the beginning or at the end of a pattern has special
-     meanings.  The first slash of a double slash at the beginning denotes the
-     beginning of a path, and a double slash at the end denotes the end of a
-     path.  That is, a pattern `//var' matches /var/log but does not match
-     /home/user/var/log, and a pattern `src//' matches
-     /home/user/src/screen/src but does not match /home/user/src/screen.
+   Shell Completion:
+     z supports tab completion.  After typing a string fragment, press TAB to
+     complete on directories that matches the pattern.  In addition to the
+     double slash notation described above, and glob matching works here.
 
      For zsh, z also enhances the completion for the cd command so you don't
      even need to learn about z at all.
