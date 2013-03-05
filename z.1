@@ -18,7 +18,27 @@ After a short learning phase,
 .Nm
 will take you to the most
 .Sq frecent
-directory that matches ALL of the strings given on the command line.
+directory that matches all of the patterns given on the command line.
+.Pp
+Each pattern is a substring that the directory to look for must
+contain, not a regular expression like in the original version nor a
+glob pattern that you can use in shell completion described below.
+.Pp
+A double slash at the beginning or at the end of a pattern has special
+meanings.  The first slash of a double slash at the beginning denotes
+the beginning of a path, and a double slash at the end denotes the end
+of a path.  That is, a pattern
+.Sq Ic //var
+matches
+.Pa /var/log
+but does not match
+.Pa /home/user/var/log ,
+and a pattern
+.Sq Ic src//
+matches
+.Pa /home/user/src/screen/src
+but does not match
+.Pa /home/user/src/screen .
 .Pp
 In this fork, the
 .Pa $HOME
@@ -142,33 +162,19 @@ time ago.
 .Pp
 Frecency is determined at runtime.
 .Ss "Common:"
-When multiple directories match all queries, and they all have a common prefix,
+When multiple directories match all queries, and they all have a
+common prefix,
 .Nm
 will cd to the shortest matching directory, without regard to
 priority.  This has been in effect, if undocumented, for quite some
 time, but should probably be configurable or reconsidered.
-.Ss "Tab Completion:"
+.Ss "Shell Completion:"
 .Nm
-supports tab completion.  After typing a substring or a glob pattern,
-press
+supports tab completion.  After typing a string fragment, press
 .Ic TAB
-to complete on directories that matches the pattern.
-.Pp
-A double slash at the beginning or at the end of a pattern has special
-meanings.  The first slash of a double slash at the beginning denotes
-the beginning of a path, and a double slash at the end denotes the end
-of a path.  That is, a pattern
-.Sq Ic //var
-matches
-.Pa /var/log
-but does not match
-.Pa /home/user/var/log ,
-and a pattern
-.Sq Ic src//
-matches
-.Pa /home/user/src/screen/src
-but does not match
-.Pa /home/user/src/screen .
+to complete on directories that matches the pattern.  In addition to
+the double slash notation described above, and glob matching works
+here.
 .Pp
 For zsh,
 .Nm
