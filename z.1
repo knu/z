@@ -19,6 +19,12 @@ After a short learning phase,
 will take you to the most
 .Sq frecent
 directory that matches ALL of the strings given on the command line.
+.Pp
+In this fork, the
+.Pa $HOME
+part in a directory name is excluded before matching so that a word or
+substring that is in your account name does not hit every single
+directory under your home directory.
 .Sh OPTIONS
 .Bl -tag -compact -width "-l"
 .It Fl h
