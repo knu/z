@@ -146,7 +146,7 @@ _z_cmd () {
      r) typ="rank";;
      t) typ="recent";;
      *) cat <<EOF >&2
-z [-lrt] [args...]
+$_Z_CMD [-lrt] [args...]
 
     -h          show this help
     -l          list dirs (matching args if given)
