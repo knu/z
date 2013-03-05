@@ -275,29 +275,39 @@ if [ -n "$BASH_VERSION" ]; then
  PROMPT_COMMAND='_z_cmd --add "$(pwd $_Z_RESOLVE_SYMLINKS 2>/dev/null)" 2>/dev/null;'"$PROMPT_COMMAND"
 
  # bash tab completion
- _z_bash_complete () {
-  (( COMP_CWORD == 1 )) && COMPREPLY=($(
-   _z_cmd -lr | awk -v q="${COMP_WORDS[$COMP_CWORD]}" -F"|" '
-    BEGIN {
-     if (q == tolower(q)) nocase = 1
-     split(q, fnd, " ")
-     home = ENVIRON["HOME"]
-    }
-    {
-     sub(/^[^\/]+/, "", $0)
-     x = $0
-     if (q !~ /^\// && substr(x, 0, length(home) + 1) == home "/") {
-      x = substr(x, length(home) + 1)
-     }
-     if (nocase) x = tolower(x)
-     for (i in fnd) if (!index(x, fnd[i])) next
-     print
-    }
-   ' 2>/dev/null
-  ))
+ __z_cmd () {
+  local pat nohome score dir LF=$'\n' IFS
+  if (( COMP_CWORD == 1 )); then
+   pat="${COMP_WORDS[$COMP_CWORD]}"
+   if [[ $pat == //* ]]; then
+    pat="/${pat#//}"
+   else
+    nohome=t
+    pat="*$pat"
+   fi
+   if [[ $pat == *// ]]; then
+    pat="${pat%//}"
+   else
+    pat="$pat*"
+   fi
+   IFS=$LF
+   COMPREPLY=($(
+     if [[ $BASH_VERSION == 4.* ]]; then
+      [[ "$pat" = "${pat,,}" ]]
+     else
+      awk -v s="$pat" 'BEGIN{exit(s!=tolower(s))}'
+     fi && shopt -s nocasematch
+     _z_cmd -lr | while IFS=' ' read -r score dir; do
+      x="${dir#"${nohome:+$HOME/}"}"
+      if [[ "$x" == $pat ]]; then
+       printf '%s\n' "$dir"
+      fi
+     done
+   ))
+  fi
  }
 
- complete -d -F _z_bash_complete ${_Z_CMD}
+ complete -d -F __z_cmd ${_Z_CMD}
  return
 fi
 
@@ -316,7 +326,7 @@ if [[ "${ZSH_VERSION-0.0}" != [0-3].* ]]; then
  }
 
  # zsh tab completion
- _z () {
+ __z_cmd () {
   emulate -L zsh
   setopt extended_glob
   local pat nohome score dir
@@ -349,5 +359,5 @@ if [[ "${ZSH_VERSION-0.0}" != [0-3].* ]]; then
   fi
  }
 
- compdef _z _z_cmd
+ compdef __z_cmd _z_cmd
 fi
