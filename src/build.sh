@@ -55,4 +55,4 @@ include_file () {
     done < "$file"
 }
 
-include_file z.main.sh > ../z.sh
+include_file "$1"
