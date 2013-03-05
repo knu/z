@@ -13,14 +13,7 @@ include_file () {
 
     while IFS=$LF read -r line; do
         if [ -n "$heredoc" ]; then
-            case "$line" in
-                -*)
-                    printf '%s\n' "$line"
-                    ;;
-                *)
-                    echo "$line"
-                    ;;
-            esac
+            printf '%s\n' "$line"
             if [ "$line" = "$heredoc" ]; then
                 heredoc=
             fi
@@ -40,9 +33,6 @@ include_file () {
                 continue
                 ;;
             *[^$SPC$TAB]*)
-                echo "$indent$line"
-                ;;
-            -*)
                 printf '%s\n' "$indent$line"
                 ;;
             *)
