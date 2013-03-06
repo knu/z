@@ -314,7 +314,7 @@ if [ -n "$BASH_VERSION" ]; then
       x="$dir/"
       [[ -n "$nohome" && "$x" == "$HOME/"* ]] && x="${x#"$HOME"}"
       if [[ "$x" == $pat ]]; then
-       printf '%s\n' "$dir"
+       printf '%q\n' "$dir"
       fi
      done
    ))
