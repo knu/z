@@ -103,11 +103,35 @@ list all directories matching foo (by frecency)
 .Ss "Installation:"
 .Bl -enum -offset 3n
 .It
-Put something like this in your
+Source
+.Pa z.sh
+from your
 .Pa $HOME/.bashrc
 or
-.Pa $HOME/.zshrc :
+.Pa $HOME/.zshrc
+like this:
 .Dl . /path/to/z.sh
+.Pp
+Note that if you are using
+.Ic bash :
+.Bl -dash -offset 1n
+.It
+The line should go something like this:
+.Dl [[ -z $PS1 ]] || \&. /path/to/z.sh
+because
+.Xr bash 1
+in some cases reads
+.Pa $HOME/.bashrc
+when the shell is not interactive and
+.Pa z.sh
+will emit an error message in that case.
+.It
+The line should better be put after defining a completion method for
+.Ic cd
+if any, because
+.Pa z.sh
+tries to enhance an existing completion definition.
+.El
 .It
 cd around for a while to build up the db.
 .It
@@ -184,13 +208,13 @@ priority.  This has been in effect, if undocumented, for quite some
 time, but should probably be configurable or reconsidered.
 .Ss "Shell Completion:"
 .Nm
-supports tab completion.  After typing a string fragment, press
+supports interactive shell completion.  After typing a string
+fragment, press
 .Ic TAB
 to complete on directories that matches the pattern.  In addition to
 the double slash notation described above, and glob matching works
 here.
 .Pp
-For zsh,
 .Nm
 also enhances the completion for the
 .Ic cd
