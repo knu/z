@@ -287,9 +287,8 @@ if [ -n "$BASH_VERSION" ]; then
  [[ -n "$_Z_NO_PROMPT_COMMAND" || "$PROMPT_COMMAND" == *'_z_cmd --add '* ]] ||
  PROMPT_COMMAND='_z_cmd --add "$(pwd $_Z_RESOLVE_SYMLINKS 2>/dev/null)" 2>/dev/null;'"$PROMPT_COMMAND"
 
- # bash tab completion
- __z_cmd () {
-  local pat nohome score dir LF=$'\n' IFS
+ _z_stack () {
+  local pat nohome score dir
   if (( COMP_CWORD == 1 )); then
    pat="${COMP_WORDS[$COMP_CWORD]}"
    if [[ $pat == //* ]]; then
@@ -303,8 +302,8 @@ if [ -n "$BASH_VERSION" ]; then
    else
     pat="$pat*"
    fi
-   IFS=$LF
-   COMPREPLY=($(
+   local IFS=$'\n'
+   COMPREPLY+=($(
      if [[ $BASH_VERSION == 4.* ]]; then
       [[ "$pat" = "${pat,,}" ]]
      else
@@ -321,7 +320,43 @@ if [ -n "$BASH_VERSION" ]; then
   fi
  }
 
- complete -d -F __z_cmd ${_Z_CMD}
+ _z_dirs () {
+  if declare -f _filedir >/dev/null; then
+   _filedir -d
+  else
+   local IFS=$'\n'
+   COMPREPLY+=($(
+     compgen -d -- "${COMP_WORDS[$COMP_CWORD]}" | while read -r dir; do
+      printf "%q\n" "$dir"
+     done
+   ))
+  fi
+ }
+
+ __z_cmd () {
+   _z_stack
+   _z_dirs
+ }
+
+ complete -o nospace -F __z_cmd ${_Z_CMD}
+
+ __z_complete_cd () {
+  local func
+  set -- $(complete -p cd 2>/dev/null)
+
+  while (( $# )); do
+   case "$1" in
+    -[oAGWCXPS]) shift 2 ;;
+    -F) func="$2"; break ;;
+    -*) shift ;;
+    *)  break ;;
+   esac
+  done
+
+  eval "_cd_z () { ${func:-_z_dirs}; (( \${#COMPREPLY} > 0 )) || _z_stack; }"
+ }; __z_complete_cd; unset -f __z_complete_cd
+
+ complete -o nospace -F _cd_z cd
  return
 fi
 
