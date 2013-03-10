@@ -49,7 +49,7 @@ OPTIONS
      Nonexistent directories are omitted from output and ignored in moving and
      completion but kept in database for future use.
 
-     In listing, only top 10 directories are shown if stdout is a terminal.
+     In listing, only top 20 directories are shown if stdout is a terminal.
      To show all, run z with a pipe, like `z | cat' or `z | less'.
 
 EXAMPLES

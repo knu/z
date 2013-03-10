@@ -48,6 +48,7 @@ _z_cmd () {
     for arg; do
      _z_cmd --add "$arg"
     done
+    return
    fi
    arg="$1"
 
@@ -80,32 +81,22 @@ _z_cmd () {
    # maintain the file
    local tempfile
    tempfile="$(mktemp $datafile.XXXXXX)" || return
-   < "$datafile" awk -v path="$arg" -v now="$(date +%s)" -F"|" '
-    BEGIN {
-     rank[path] = 1
-     time[path] = now
-    }
+   <"$datafile" awk -v path="$arg" -v now="$(date +%s)" -F"|" '
     $2 >= 1 {
-     if ($1 == path) {
-      rank[$1] = $2 + 1
-      time[$1] = now
-     } else {
-      rank[$1] = $2
-      time[$1] = $3
-     }
+     rank[$1] = $2
+     time[$1] = $3
      count += $2
     }
     END {
-     if (count > 6000) {
-      for (i in rank) print i "|" 0.99 * rank[i] "|" time[i] # aging
-     } else for (i in rank) print i "|" rank[i] "|" time[i]
+     rank[path] += 1
+     time[path] = now
+     if (count > 6000)
+      for (i in rank) rank[i] *= 0.99
+     for (i in rank) print i "|" rank[i] "|" time[i]
     }
-   ' 2>/dev/null >| "$tempfile"
-   if [ $? -ne 0 -a -f "$datafile" ]; then
-    env rm -f "$tempfile"
-   else
-    env mv -f "$tempfile" "$datafile"
-   fi
+   ' 2>/dev/null >|"$tempfile" && \
+    mv -f "$tempfile" "$datafile"
+   rm -f "$tempfile"
    ;;
   --del|--delete)
    shift
@@ -115,6 +106,7 @@ _z_cmd () {
     for arg; do
      _z_cmd --delete "$arg"
     done
+    return
    fi
    arg="$1"
 
@@ -127,12 +119,9 @@ _z_cmd () {
    if [ -f "$datafile" ]; then
     local tempfile
     tempfile="$(mktemp $datafile.XXXXXX)" || return
-    < "$datafile" awk -v dir="$arg" -F"|" '$1 != dir' 2>/dev/null >| "$tempfile"
-    if [ $? -ne 0 -a -f "$datafile" ]; then
-     env rm -f "$tempfile"
-    else
-     env mv -f "$tempfile" "$datafile"
-    fi
+    <"$datafile" awk -v dir="$arg" -F"|" '$1 != dir' 2>/dev/null >|"$tempfile" && \
+     mv -f "$tempfile" "$datafile"
+    rm -f "$tempfile"
    else
     touch "$datafile"
    fi
@@ -163,33 +152,34 @@ EOF
    done
    shift $((OPTIND-1))
 
-   [ $# -eq 0 ] && list=1
-
-   # if we hit enter on a completion just go there
-   if [ -z "$list" -a $# -eq 1 ]; then
-    case "$1" in
+   case $# in
+    0) list=1;;
+    1)
+     # if we hit enter on a completion just go there;
      # completions will always start with /
-     /*) [ -d "$1" ] && cd "$1" && return;;
-    esac
-   fi
+     if [[ -z "$list" && "$1" == /* && -d "$1" ]]; then
+      cd "$1" && return
+     fi
+     ;;
+   esac
 
    fnd="${fnd:+$fnd }$*"
 
    # no file yet
    [ -f "$datafile" ] || return
 
-   # show only top 10 if stdout is a terminal
-   [ -t 1 ] && limit=10
+   # show only top 20 if stdout is a terminal
+   [ -t 1 ] && limit=20
 
    cd="$(while read line; do
     [ -d "${line%%\|*}" ] && echo "$line"
-   done < "$datafile" | awk -v t="$(date +%s)" -v list="$list" -v typ="$typ" -v q="$fnd" -v limit="$limit" -F"|" '
+   done <"$datafile" | awk -v t="$(date +%s)" -v list="$list" -v typ="$typ" -v q="$fnd" -v limit="$limit" -F"|" '
     function frecent(rank, time) {
      dx = t - time
      if (dx < 3600) return rank * 4
      if (dx < 86400) return rank * 2
      if (dx < 604800) return rank / 2
-     return rank/4
+     return rank / 4
     }
     function output(files, toopen, override) {
      if (list) {
@@ -236,11 +226,12 @@ EOF
             (!sfx || i - 1 + length(pat) == length(s))
     }
     {
-     if (typ == "rank") {
+     if (typ == "rank")
       f = $2
-     } else if (typ == "recent") {
+     else if (typ == "recent")
       f = $3 - t
-     } else f = frecent($2, $3)
+     else
+      f = frecent($2, $3)
      wcase[$1] = nocase[$1] = f
      for (i in a) {
       x = $1 "/"
@@ -262,12 +253,12 @@ EOF
      }
     }
     END {
-     if (cx) {
+     if (cx)
       output(wcase, cx, common(wcase))
-     } else if (ncx) output(nocase, ncx, common(nocase))
+     else if (ncx)
+      output(nocase, ncx, common(nocase))
     }
-   ')"
-   [ $? -gt 0 ] && return
+   ')" || return
    if [ -n "$list" ]; then
     cat <<EOF
 $cd
