@@ -60,12 +60,9 @@ case "$1" in
      for (i in rank) rank[i] *= 0.99
     for (i in rank) print i "|" rank[i] "|" time[i]
    }
-  ' 2>/dev/null >| "$tempfile"
-  if [ $? -ne 0 -a -f "$datafile" ]; then
-   env rm -f "$tempfile"
-  else
-   env mv -f "$tempfile" "$datafile"
-  fi
+  ' 2>/dev/null >|"$tempfile" && \
+   mv -f "$tempfile" "$datafile"
+  rm -f "$tempfile"
   ;;
  --del|--delete)
   shift
@@ -88,12 +85,9 @@ case "$1" in
   if [ -f "$datafile" ]; then
    local tempfile
    tempfile="$(mktemp $datafile.XXXXXX)" || return
-   < "$datafile" awk -v dir="$arg" -F"|" '$1 != dir' 2>/dev/null >| "$tempfile"
-   if [ $? -ne 0 -a -f "$datafile" ]; then
-    env rm -f "$tempfile"
-   else
-    env mv -f "$tempfile" "$datafile"
-   fi
+   <"$datafile" awk -v dir="$arg" -F"|" '$1 != dir' 2>/dev/null >|"$tempfile" && \
+    mv -f "$tempfile" "$datafile"
+   rm -f "$tempfile"
   else
    touch "$datafile"
   fi
@@ -228,8 +222,7 @@ EOF
      output(wcase, cx, common(wcase))
     } else if (ncx) output(nocase, ncx, common(nocase))
    }
-  ')"
-  [ $? -gt 0 ] && return
+  ')" || return
   if [ -n "$list" ]; then
    cat <<EOF
 $cd
