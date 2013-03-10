@@ -139,13 +139,13 @@ EOF
 
   cd="$(while read line; do
    [ -d "${line%%\|*}" ] && echo "$line"
-  done < "$datafile" | awk -v t="$(date +%s)" -v list="$list" -v typ="$typ" -v q="$fnd" -v limit="$limit" -F"|" '
+  done <"$datafile" | awk -v t="$(date +%s)" -v list="$list" -v typ="$typ" -v q="$fnd" -v limit="$limit" -F"|" '
    function frecent(rank, time) {
     dx = t - time
     if (dx < 3600) return rank * 4
     if (dx < 86400) return rank * 2
     if (dx < 604800) return rank / 2
-    return rank/4
+    return rank / 4
    }
    function output(files, toopen, override) {
     if (list) {
@@ -192,11 +192,12 @@ EOF
            (!sfx || i - 1 + length(pat) == length(s))
    }
    {
-    if (typ == "rank") {
+    if (typ == "rank")
      f = $2
-    } else if (typ == "recent") {
+    else if (typ == "recent")
      f = $3 - t
-    } else f = frecent($2, $3)
+    else
+     f = frecent($2, $3)
     wcase[$1] = nocase[$1] = f
     for (i in a) {
      x = $1 "/"
@@ -218,9 +219,10 @@ EOF
     }
    }
    END {
-    if (cx) {
+    if (cx)
      output(wcase, cx, common(wcase))
-    } else if (ncx) output(nocase, ncx, common(nocase))
+    else if (ncx)
+     output(nocase, ncx, common(nocase))
    }
   ')" || return
   if [ -n "$list" ]; then
