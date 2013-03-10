@@ -47,25 +47,18 @@ case "$1" in
   # maintain the file
   local tempfile
   tempfile="$(mktemp $datafile.XXXXXX)" || return
-  < "$datafile" awk -v path="$arg" -v now="$(date +%s)" -F"|" '
-   BEGIN {
-    rank[path] = 1
-    time[path] = now
-   }
+  <"$datafile" awk -v path="$arg" -v now="$(date +%s)" -F"|" '
    $2 >= 1 {
-    if ($1 == path) {
-     rank[$1] = $2 + 1
-     time[$1] = now
-    } else {
-     rank[$1] = $2
-     time[$1] = $3
-    }
+    rank[$1] = $2
+    time[$1] = $3
     count += $2
    }
    END {
-    if (count > 6000) {
-     for (i in rank) print i "|" 0.99 * rank[i] "|" time[i] # aging
-    } else for (i in rank) print i "|" rank[i] "|" time[i]
+    rank[path] += 1
+    time[path] = now
+    if (count > 6000)
+     for (i in rank) rank[i] *= 0.99
+    for (i in rank) print i "|" rank[i] "|" time[i]
    }
   ' 2>/dev/null >| "$tempfile"
   if [ $? -ne 0 -a -f "$datafile" ]; then
