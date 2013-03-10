@@ -14,6 +14,7 @@ case "$1" in
    for arg; do
     _z_cmd --add "$arg"
    done
+   return
   fi
   arg="$1"
 
@@ -81,6 +82,7 @@ case "$1" in
    for arg; do
     _z_cmd --delete "$arg"
    done
+   return
   fi
   arg="$1"
 
