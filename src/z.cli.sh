@@ -131,15 +131,16 @@ EOF
   done
   shift $((OPTIND-1))
 
-  [ $# -eq 0 ] && list=1
-
-  # if we hit enter on a completion just go there
-  if [ -z "$list" -a $# -eq 1 ]; then
-   case "$1" in
+  case $# in
+   0) list=1;;
+   1)
+    # if we hit enter on a completion just go there;
     # completions will always start with /
-    /*) [ -d "$1" ] && cd "$1" && return;;
-   esac
-  fi
+    if [[ -z "$list" && "$1" == /* && -d "$1" ]]; then
+     cd "$1" && return
+    fi
+    ;;
+  esac
 
   fnd="${fnd:+$fnd }$*"
 
