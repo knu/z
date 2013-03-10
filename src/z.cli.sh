@@ -134,8 +134,8 @@ EOF
   # no file yet
   [ -f "$datafile" ] || return
 
-  # show only top 10 if stdout is a terminal
-  [ -t 1 ] && limit=10
+  # show only top 20 if stdout is a terminal
+  [ -t 1 ] && limit=20
 
   cd="$(while read line; do
    [ -d "${line%%\|*}" ] && echo "$line"
