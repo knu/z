@@ -313,7 +313,7 @@ if [ -n "$BASH_VERSION" ]; then
 
  _z_dirs () {
   if declare -f _filedir >/dev/null; then
-   _filedir -d
+   cur="${COMP_WORDS[$COMP_CWORD]}" _filedir -d
   else
    local IFS=$'\n'
    COMPREPLY+=($(
