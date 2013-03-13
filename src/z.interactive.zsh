@@ -60,4 +60,7 @@ _cd_z () {
  _wanted z expl 'z stack' _z_stack
 }
 
-compdef _cd_z cd
+[ "$_Z_NO_COMPLETE_CD" ] || {
+ zstyle ':completion:*:cd:*' group-name ''
+ compdef _cd_z cd
+}

@@ -1,4 +1,4 @@
-.Dd March 5, 2013
+.Dd March 13, 2013
 .Dt Z \&1 "User Commands Manual"
 .Os Unix
 .Sh NAME
@@ -152,6 +152,11 @@ to change the data file name (default
 .Sq Pa $HOME/.z ) .
 .It
 Set
+.Ev _Z_NO_COMPLETE_CD
+to disable advanced completion for
+.Ic cd .
+.It
+Set
 .Ev _Z_NO_RESOLVE_SYMLINKS
 to prevent symlink resolution.
 .It
@@ -220,7 +225,8 @@ also enhances the completion for the
 .Ic cd
 command so you don't even need to learn about
 .Nm
-at all.
+at all.  If you don't like this feature, it can be disabled.  See the
+next section.
 .Pp
 .Sh ENVIRONMENT
 A function
@@ -258,6 +264,11 @@ appends a function
 to the
 .Ic precmd_functions
 array.
+.Pp
+The environment variable
+.Ev _Z_NO_COMPLETE_CD
+can be set to disable advanced completion for
+.Ic cd .
 .Pp
 The environment variable
 .Ev _Z_NO_PROMPT_COMMAND

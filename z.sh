@@ -347,7 +347,9 @@ if [ -n "$BASH_VERSION" ]; then
   eval "_cd_z () { ${func:-_z_dirs}; (( \${#COMPREPLY} > 0 )) || _z_stack; }"
  }; __z_complete_cd; unset -f __z_complete_cd
 
- complete -o nospace -F _cd_z cd
+ [[ -n "$_Z_NO_COMPLETE_CD" ]] || {
+  complete -o nospace -F _cd_z cd
+ }
  return
 fi
 
@@ -413,5 +415,8 @@ if [[ "${ZSH_VERSION-0.0}" != [0-3].* ]]; then
   _wanted z expl 'z stack' _z_stack
  }
 
- compdef _cd_z cd
+ [ "$_Z_NO_COMPLETE_CD" ] || {
+  zstyle ':completion:*:cd:*' group-name ''
+  compdef _cd_z cd
+ }
 fi

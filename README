@@ -85,6 +85,8 @@ NOTES
 
         Set _Z_DATA to change the data file name (default `$HOME/.z').
 
+        Set _Z_NO_COMPLETE_CD to disable advanced completion for cd.
+
         Set _Z_NO_RESOLVE_SYMLINKS to prevent symlink resolution.
 
         Set _Z_NO_PROMPT_COMMAND to handle PROMPT_COMMAND (bash) / precmd
@@ -127,7 +129,8 @@ NOTES
      works here.
 
      z also enhances the completion for the cd command so you don't even need
-     to learn about z at all.
+     to learn about z at all.  If you don't like this feature, it can be
+     disabled.  See the next section.
 
 ENVIRONMENT
      A function _z_cmd() is defined.
@@ -144,6 +147,9 @@ ENVIRONMENT
      In bash, z prepends a command to the PROMPT_COMMAND environment variable
      to maintain its database.  In zsh, z appends a function _z_precmd to the
      precmd_functions array.
+
+     The environment variable _Z_NO_COMPLETE_CD can be set to disable advanced
+     completion for cd.
 
      The environment variable _Z_NO_PROMPT_COMMAND can be set if you want to
      handle PROMPT_COMMAND or precmd yourself.
@@ -181,4 +187,4 @@ HISTORY
 BUGS
      Please file bugs at <https://github.com/knu/z>.
 
-Unix                             March 5, 2013                            Unix
+Unix                            March 13, 2013                            Unix
