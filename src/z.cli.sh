@@ -46,7 +46,7 @@ case "$1" in
 
   # maintain the file
   local tempfile
-  tempfile="$(mktemp $datafile.XXXXXX)" || return
+  tempfile="$(mktemp "$datafile.XXXXXX")" || return
   <"$datafile" awk -v path="$arg" -v now="$(date +%s)" -F"|" '
    $2 >= 1 {
     rank[$1] = $2
@@ -84,7 +84,7 @@ case "$1" in
 
   if [ -f "$datafile" ]; then
    local tempfile
-   tempfile="$(mktemp $datafile.XXXXXX)" || return
+   tempfile="$(mktemp "$datafile.XXXXXX")" || return
    <"$datafile" awk -v dir="$arg" -F"|" '$1 != dir' 2>/dev/null >|"$tempfile" && \
     mv -f "$tempfile" "$datafile"
    rm -f "$tempfile"
