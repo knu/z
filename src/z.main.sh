@@ -32,6 +32,11 @@ esac
 
 : ${_Z_CMD:=z} ${_Z_DATA:=$HOME/.z}
 
+[ -e "$_Z_DATA" -a ! -f "$_Z_DATA" ] && {
+ echo "ERROR: $_Z_CMD's datafile ($_Z_DATA) is not a regular file."
+ ls -ld "$_Z_DATA"
+} >&2
+
 _z_cmd () {
  . z.cli.sh "$@"
 }

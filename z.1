@@ -288,7 +288,10 @@ ends with a slash, all its subdirectories are also excluded.
 Data is stored in
 .Pa $HOME/.z .  This can be overridden by setting the
 .Ev _Z_DATA
-environment variable.
+environment variable.  When initialized,
+.Nm
+will raise an error if this path is a directory, and not function
+correctly.
 .Pp
 A man page
 .Pq Pa z.1
