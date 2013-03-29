@@ -30,7 +30,7 @@ case $- in
    *) echo 'ERROR: z.sh is meant to be sourced, not directly executed.' >&2
 esac
 
-: ${_Z_CMD:=z}
+: ${_Z_CMD:=z} ${_Z_DATA:=$HOME/.z}
 
 _z_cmd () {
  . z.cli.sh "$@"
