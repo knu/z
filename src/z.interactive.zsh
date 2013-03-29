@@ -19,6 +19,9 @@ _z_stack () {
  local -a qlist
  if (( CURRENT == 2 )); then
   pat=${words[$CURRENT]}
+  if [[ $pat == \~* ]]; then
+   pat="\\$pat"
+  fi
   if [[ $pat == //* ]]; then
    pat="/${pat##/#}"
   else

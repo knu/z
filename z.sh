@@ -374,6 +374,9 @@ if [[ "${ZSH_VERSION-0.0}" != [0-3].* ]]; then
   local -a qlist
   if (( CURRENT == 2 )); then
    pat=${words[$CURRENT]}
+   if [[ $pat == \~* ]]; then
+    pat="\\$pat"
+   fi
    if [[ $pat == //* ]]; then
     pat="/${pat##/#}"
    else
