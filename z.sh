@@ -26,8 +26,14 @@
 #   * z -c foo  # restrict matches to subdirs of $PWD
 
 case $- in
- *i*) ;;
-   *) echo 'ERROR: z.sh is meant to be sourced, not directly executed.' >&2
+ *i*)
+  # Guard against Bash, which reads .bashrc even in a noninteractive
+  # session (e.g. via ssh)
+  [ -n "${PS1+t}" ] || return
+  ;;
+ *)
+  echo 'ERROR: z.sh is meant to be sourced, not directly executed.' >&2
+  exit 1
 esac
 
 : ${_Z_CMD:=z} ${_Z_DATA:=$HOME/.z}
