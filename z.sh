@@ -115,6 +115,7 @@ _z_cmd () {
     END {
      rank[path] += 1
      time[path] = now
+     # aging
      if (count > 6000)
       for (i in rank) rank[i] *= 0.99
      for (i in rank) print i "|" rank[i] "|" time[i]
@@ -199,19 +200,22 @@ EOF
    [ -t 1 ] && limit=20
 
    cd="$(while read line; do
+    # only count directories
     [ -d "${line%%\|*}" ] && echo "$line"
    done <"$datafile" | awk -v t="$(date +%s)" -v list="$list" -v typ="$typ" -v q="$fnd" -v limit="$limit" -F"|" '
     function frecent(rank, time) {
+     # relate frequency and time
      dx = t - time
      if (dx < 3600) return rank * 4
      if (dx < 86400) return rank * 2
      if (dx < 604800) return rank / 2
      return rank / 4
     }
-    function output(files, toopen, override) {
+    function output(files, toopen, common) {
+     # list or return the desired directory
      if (list) {
-      if (override) {
-       printf "%-10s %s\n", max, override
+      if (common) {
+       printf "%-10s %s\n", max, common
        if (limit) limit--
       }
       cmd = "sort -nr"
@@ -219,21 +223,21 @@ EOF
       for (i in files) {
        file = files[i]
        if (file > max) file = max
-       if (file && i != override) printf "%-10s %s\n", file, i | cmd
+       if (file && i != common) printf "%-10s %s\n", file, i | cmd
       }
      } else {
-      if (override) toopen = override
+      if (common) toopen = common
       print toopen
      }
     }
     function common(matches) {
-     # shortest match
+     # find the common root of a list of dirs, if it exists
      for (i in matches) {
       if (matches[i] && (!short || length(i) < length(short))) short = i
      }
      if (short == "/") return
-     # shortest match must be common to each match. escape special characters in
-     # a copy when testing, so we can return the original.
+     # use a copy to escape special characters, as we want to return
+     # the original.
      clean_short = short
      gsub(/[\(\)\[\]\|]/, "\\\\&", clean_short)
      for (i in matches) if (matches[i] && i !~ clean_short) return
