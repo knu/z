@@ -51,6 +51,20 @@ _z_cmd () {
 
  # add entries
  case "$1" in
+  --mktemp)
+   mktemp "$datafile.XXXXXX" 2>/dev/null && return
+   (
+    set -o noclobber
+    while :; do
+     tmp="$datafile.$RANDOM"
+     if : >"$tmp"; then
+      echo "$tmp"
+      exit
+     fi
+    done
+   ) 2>/dev/null
+   return
+   ;;
   --add)
    shift
 
@@ -91,7 +105,7 @@ _z_cmd () {
 
    # maintain the file
    local tempfile
-   tempfile="$(mktemp "$datafile.XXXXXX")" || return
+   tempfile="$(_z_cmd --mktemp)" || return
    <"$datafile" awk -v path="$arg" -v now="$(date +%s)" -F"|" '
     $2 >= 1 {
      rank[$1] = $2
@@ -129,7 +143,7 @@ _z_cmd () {
 
    if [ -f "$datafile" ]; then
     local tempfile
-    tempfile="$(mktemp "$datafile.XXXXXX")" || return
+    tempfile="$(_z_cmd --mktemp)" || return
     <"$datafile" awk -v dir="$arg" -F"|" '$1 != dir' 2>/dev/null >|"$tempfile" && \
      mv -f "$tempfile" "$datafile"
     rm -f "$tempfile"
