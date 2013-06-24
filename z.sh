@@ -289,7 +289,7 @@ alias ${_Z_CMD}=_z_cmd
 
 if [ -n "$BASH_VERSION" ]; then
  [[ -n "$_Z_NO_PROMPT_COMMAND" || "$PROMPT_COMMAND" == *'_z_cmd --add '* ]] ||
- PROMPT_COMMAND='_z_cmd --add "$(pwd $_Z_RESOLVE_SYMLINKS 2>/dev/null)" 2>/dev/null;'"$PROMPT_COMMAND"
+ PROMPT_COMMAND='_z_cmd --add "$(pwd $_Z_RESOLVE_SYMLINKS 2>/dev/null)" 2>/dev/null'"${PROMPT_COMMAND:+$'\n'}$PROMPT_COMMAND"
 
  _z_stack () {
   local pat nohome score dir
