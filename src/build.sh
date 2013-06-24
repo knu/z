@@ -20,7 +20,7 @@ include_file () {
             continue
         fi
         IFS="$SPC$TAB$LF" set -- $line
-        if [ "$1" = . -a -f ./"$2" ]; then
+        if [ . = "$1" -a -f ./"$2" ]; then
             include_file ./"$2" "$indent${line%%[^$SPC$TAB]*}"
             continue
         fi
