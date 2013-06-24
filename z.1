@@ -1,4 +1,4 @@
-.Dd March 13, 2013
+.Dd June 24, 2013
 .Dt Z \&1 "User Commands Manual"
 .Os Unix
 .Sh NAME
@@ -6,7 +6,7 @@
 .Nd jump around
 .Sh SYNOPSIS
 .Nm z
-.Op Fl hclrt
+.Op Fl hclrtx
 .Op Ar string ...
 .Sh AVAILABILITY
 bash, zsh
@@ -74,6 +74,9 @@ Sort by rank instead of
 .It Fl t
 Sort by recency instead of
 .Sq frecency .
+.Pp
+.It Fl x
+Remove the current directory from the datafile.
 .El
 .Pp
 Nonexistent directories are omitted from output and ignored in moving

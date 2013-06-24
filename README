@@ -4,7 +4,7 @@ NAME
      z -- jump around
 
 SYNOPSIS
-     z [-hclrt] [string ...]
+     z [-hclrtx] [string ...]
 
 AVAILABILITY
      bash, zsh
@@ -45,6 +45,8 @@ OPTIONS
      -r  Sort by rank instead of `frecency'.
 
      -t  Sort by recency instead of `frecency'.
+
+     -x  Remove the current directory from the datafile.
 
      Nonexistent directories are omitted from output and ignored in moving and
      completion but kept in database for future use.
@@ -188,4 +190,4 @@ HISTORY
 BUGS
      Please file bugs at <https://github.com/knu/z>.
 
-Unix                            March 13, 2013                            Unix
+Unix                             June 24, 2013                            Unix

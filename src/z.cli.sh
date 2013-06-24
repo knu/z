@@ -96,20 +96,22 @@ case "$1" in
   # list/go
   local opt OPTIND=1
   local list rev typ fnd cd limit
-  while getopts hclrt opt; do
+  while getopts hclrtx opt; do
    case "$opt" in
     c) fnd="/$PWD/";;
     l) list=1;;
     r) typ="rank";;
     t) typ="recent";;
+    x) _z_cmd --del "$PWD";;
     *) cat <<EOF >&2
-$_Z_CMD [-clrt] [args...]
+$_Z_CMD [-clrtx] [args...]
 
     -h          show this help
     -c          restrict matches to subdirectories of the current directory
     -l          list dirs (matching args if given)
     -r          sort dirs by rank
     -t          sort dirs by recency
+    -x          remove the current directory from the datafile
 
     Omitting args implies -l.
 EOF
