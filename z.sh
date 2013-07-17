@@ -103,7 +103,7 @@ _z_cmd () {
 
    [ -f "$datafile" ] || touch "$datafile"
 
-   # maintain the file
+   # maintain the data file
    local tempfile
    tempfile="$(_z_cmd --mktemp)" || return
    <"$datafile" awk -v path="$arg" -v now="$(date +%s)" -F"|" '
@@ -117,8 +117,8 @@ _z_cmd () {
      time[path] = now
      # aging
      if (count > 6000)
-      for (i in rank) rank[i] *= 0.99
-     for (i in rank) print i "|" rank[i] "|" time[i]
+      for (x in rank) rank[x] *= 0.99
+     for (x in rank) print x "|" rank[x] "|" time[x]
     }
    ' 2>/dev/null >|"$tempfile" && \
     mv -f "$tempfile" "$datafile"
@@ -211,7 +211,7 @@ EOF
      if (dx < 604800) return rank / 2
      return rank / 4
     }
-    function output(files, toopen, common) {
+    function output(files, out, common) {
      # list or return the desired directory
      if (list) {
       if (common) {
@@ -220,74 +220,74 @@ EOF
       }
       cmd = "sort -nr"
       if (limit) cmd = cmd " | head -n" limit
-      for (i in files) {
-       file = files[i]
+      for (x in files) {
+       file = files[x]
        if (file > max) file = max
-       if (file && i != common) printf "%-10s %s\n", file, i | cmd
+       if (file && x != common) printf "%-10s %s\n", file, x | cmd
       }
      } else {
-      if (common) toopen = common
-      print toopen
+      if (common) out = common
+      print out
      }
     }
     function common(matches) {
-     # find the common root of a list of dirs, if it exists
-     for (i in matches) {
-      if (matches[i] && (!short || length(i) < length(short))) short = i
+     # find the common root of a list of matches, if it exists
+     for (x in matches) {
+      if (matches[x] && (!short || length(x) < length(short))) short = x
      }
      if (short == "/") return
      # use a copy to escape special characters, as we want to return
-     # the original.
+     # the original. yeah, this escaping is awful.
      clean_short = short
      gsub(/[\(\)\[\]\|]/, "\\\\&", clean_short)
-     for (i in matches) if (matches[i] && i !~ clean_short) return
+     for (x in matches) if (matches[x] && x !~ clean_short) return
      return short
     }
     BEGIN {
      max = 9999999999
-     oldf = noldf = -max
-     split(q, a, " ")
+     hi_rank = ihi_rank = -max
+     split(q, words, " ")
      homepfx = ENVIRON["HOME"] "/"
     }
-    function xmatch(s, pat, nc, pfx, sfx,  i) {
+    function xmatch(s, pat, nc, pfx, sfx,  x) {
      if (nc) { s = tolower(s); pat = tolower(pat); }
-     i = index(s, pat)
-     return i && \
-            (!pfx || i == 1) && \
-            (!sfx || i - 1 + length(pat) == length(s))
+     x = index(s, pat)
+     return x && \
+            (!pfx || x == 1) && \
+            (!sfx || x - 1 + length(pat) == length(s))
     }
     {
      if (typ == "rank")
-      f = $2
+      rank = $2
      else if (typ == "recent")
-      f = $3 - t
+      rank = $3 - t
      else
-      f = frecent($2, $3)
-     wcase[$1] = nocase[$1] = f
-     for (i in a) {
+      rank = frecent($2, $3)
+     matches[$1] = imatches[$1] = rank
+     for (x in words) {
       x = $1 "/"
-      pat = a[i]
+      pat = words[x]
       pfx = sfx = 0
       if (sub(/^\/\//, "/", pat)) pfx = 1
       if (sub(/\/\/$/, "/", pat)) sfx = 1
       if (!pfx && substr(x, 1, length(homepfx)) == homepfx)
        x = substr(x, length(homepfx) - 1)
-      if (!xmatch(x, pat, 0, pfx, sfx)) delete wcase[$1]
-      if (!xmatch(x, pat, 1, pfx, sfx)) delete nocase[$1]
+      if (!xmatch(x, pat, 0, pfx, sfx)) delete matches[$1]
+      if (!xmatch(x, pat, 1, pfx, sfx)) delete imatches[$1]
      }
-     if (wcase[$1] && wcase[$1] > oldf) {
-      cx = $1
-      oldf = wcase[$1]
-     } else if (nocase[$1] && nocase[$1] > noldf) {
-      ncx = $1
-      noldf = nocase[$1]
+     if (matches[$1] && matches[$1] > hi_rank) {
+      best_match = $1
+      hi_rank = matches[$1]
+     } else if (imatches[$1] && imatches[$1] > ihi_rank) {
+      ibest_match = $1
+      ihi_rank = imatches[$1]
      }
     }
     END {
-     if (cx)
-      output(wcase, cx, common(wcase))
-     else if (ncx)
-      output(nocase, ncx, common(nocase))
+     if (best_match)
+      output(matches, best_match, common(matches))
+     else if (ibest_match)
+      output(imatches, ibest_match, common(imatches))
     }
    ')" || return
    if [ -n "$list" ]; then
