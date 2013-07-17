@@ -425,7 +425,11 @@ if [[ "${ZSH_VERSION-0.0}" != [0-3].* ]]; then
     [[ -n "$nohome" && "$x" == "$HOME/"* ]] && x="${x#"$HOME"}"
     if [[ "$x" == ${~pat} ]]; then
      hash -d x= dir=
-     qlist+=(${(D)dir})
+     if is-at-least 4.3.11; then
+      qlist+=(${(D)dir})
+     else
+      qlist+=(${dir/#"$HOME"\//\~\/})
+     fi
     fi
    done
    (( ${#qlist} == 0 )) && return 1
