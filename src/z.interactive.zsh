@@ -1,5 +1,5 @@
 # -*- mode: sh; sh-shell: zsh; sh-basic-offset: 1 -*-
-[ "$_Z_NO_PROMPT_COMMAND" ] || {
+[[ -n "$_Z_NO_PROMPT_COMMAND" || -n "${precmd_functions[(r)_z_precmd]}" ]] || {
  if [ "$_Z_NO_RESOLVE_SYMLINKS" ]; then
   _z_precmd () {
    _z_cmd --add "${PWD:a}"
@@ -56,6 +56,7 @@ __z_cmd () {
 
 compdef __z_cmd _z_cmd
 
+[[ ${_comps[cd]} = _cd_z ]] ||
 typeset -g _cd_z_super="${_comps[cd]:-_cd}"
 
 _cd_z () {
