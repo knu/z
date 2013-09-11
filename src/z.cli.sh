@@ -220,8 +220,8 @@ EOF
      rank = frecent($2, $3)
     matches[$1] = imatches[$1] = rank
     for (x in words) {
-     x = $1 "/"
      pat = words[x]
+     x = $1 "/"
      pfx = sfx = 0
      if (sub(/^\/\//, "/", pat)) pfx = 1
      if (sub(/\/\/$/, "/", pat)) sfx = 1
