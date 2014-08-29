@@ -403,6 +403,7 @@ if [[ "${ZSH_VERSION-0.0}" != [0-3].* ]]; then
   setopt extended_glob
   local pat nohome score dir
   local -a qlist
+  autoload -z is-at-least
   if (( CURRENT == 2 )); then
    pat=${words[$CURRENT]}
    if [[ $pat == \~* ]]; then
