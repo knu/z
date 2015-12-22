@@ -49,6 +49,7 @@ _z_stack () {
   done
   (( ${#qlist} == 0 )) && return 1
   compadd -d qlist -U -Q "$@" -- "${qlist[@]}"
+  compstate[insert]=menu
  fi
 }
 
