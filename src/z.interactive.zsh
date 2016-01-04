@@ -48,7 +48,7 @@ _z_stack () {
    fi
   done
   (( ${#qlist} == 0 )) && return 1
-  compadd -d qlist -U -Q "$@" -- "${qlist[@]}"
+  compadd -d qlist -Q "$@" -- "${qlist[@]}"
  fi
 }
 
