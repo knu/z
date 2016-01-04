@@ -434,8 +434,7 @@ if [[ "${ZSH_VERSION-0.0}" != [0-3].* ]]; then
     fi
    done
    (( ${#qlist} == 0 )) && return 1
-   compadd -d qlist -U -Q "$@" -- "${qlist[@]}"
-   compstate[insert]=menu
+   compadd -d qlist -Q "$@" -- "${qlist[@]}"
   fi
  }
 
