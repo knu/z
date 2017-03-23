@@ -3,7 +3,7 @@
 PROMPT_COMMAND='_z_cmd --add "$(pwd $_Z_RESOLVE_SYMLINKS 2>/dev/null)" 2>/dev/null'"${PROMPT_COMMAND:+$'\n'}$PROMPT_COMMAND"
 
 _z_stack () {
- local pat nohome score dir
+ local pat nohome score dir x
  if (( COMP_CWORD == 1 )); then
   pat="${COMP_WORDS[$COMP_CWORD]}"
   if [[ $pat == //* ]]; then

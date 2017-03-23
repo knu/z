@@ -15,7 +15,7 @@
 _z_stack () {
  emulate -L zsh
  setopt extended_glob
- local pat nohome score dir
+ local pat nohome score dir x
  local -a qlist
  autoload -z is-at-least
  if (( CURRENT == 2 )); then
