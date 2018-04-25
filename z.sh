@@ -44,6 +44,10 @@ esac
 } >&2
 
 _z_cmd () {
+  if [[ -n "$ZSH_VERSION" ]]; then
+    emulate -L zsh
+    setopt interactivecomments
+  fi
  local datafile="$_Z_DATA"
 
  # bail out if we don't own ~/.z (we're another user but our ENV is still set)

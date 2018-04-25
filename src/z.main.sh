@@ -44,6 +44,10 @@ esac
 } >&2
 
 _z_cmd () {
+  if [[ -n "$ZSH_VERSION" ]]; then
+    emulate -L zsh
+    setopt interactivecomments
+  fi
  . z.cli.sh "$@"
 }
 
