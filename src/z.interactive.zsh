@@ -14,7 +14,7 @@
 
 _z_stack () {
  emulate -L zsh
- setopt extended_glob
+ setopt extended_glob no_auto_name_dirs
  local pat nohome score dir x
  local -a qlist
  autoload -z is-at-least
@@ -39,7 +39,6 @@ _z_stack () {
    x="$dir/"
    [[ -n "$nohome" && "$x" == "$HOME/"* ]] && x="${x#"$HOME"}"
    if [[ "$x" == ${~pat} ]]; then
-    hash -d x= dir=
     if is-at-least 4.3.11; then
      qlist+=(${(D)dir})
     else
