@@ -454,7 +454,7 @@ if [[ "${ZSH_VERSION-0.0}" != [0-3].* ]]; then
 
  _cd_z () {
   local expl
-  $_cd_z_super
+  $_cd_z_super && return 0
   _wanted z expl 'z stack' _z_stack
  }
 

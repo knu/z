@@ -64,7 +64,7 @@ typeset -g _cd_z_super="${_comps[cd]:-_cd}"
 
 _cd_z () {
  local expl
- $_cd_z_super
+ $_cd_z_super && return 0
  _wanted z expl 'z stack' _z_stack
 }
 
